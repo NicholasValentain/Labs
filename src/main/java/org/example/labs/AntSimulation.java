@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
@@ -25,52 +26,50 @@ public class AntSimulation extends Application {
     @Override
     public void start(Stage primaryStage) {
         StackPane root = new StackPane();
-        root.setStyle("-fx-background-image: url('soil.png'); -fx-background-size: cover;");
+        root.setStyle("-fx-background-image: url('soil.png'); -fx-background-size: cover;"); // Установка фона
         Habitat habitat = new Habitat(root);
 
         Text descriptionLabel = new Text("Press 'B' to start simulation, 'E' to stop simulation");
-        descriptionLabel.setFont(Font.font("Arial Rounded MT", 35)); // устанавливаем шрифт Arial Rounded MT размером 35
-        Color customColor = Color.rgb(215,125,49); // создаем свой собственный цвет
-        descriptionLabel.setFill(customColor); // устанавливаем цвет текста на наш свой собственный цвет
-        descriptionLabel.setStroke(Color.BLACK);
-        descriptionLabel.setStrokeWidth(2.0);
-        descriptionLabel.setStrokeType(StrokeType.OUTSIDE);
+        descriptionLabel.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35
+        Color customColor = Color.rgb(215,125,49); // Создаем свой собственный цвет
+        descriptionLabel.setFill(customColor); // Устанавливаем цвет текста на наш
+        descriptionLabel.setStroke(Color.BLACK); // Устанавливаем чёрный контур
+        descriptionLabel.setStrokeWidth(2.0); // Устанавливаем толщину обводки
+        descriptionLabel.setStrokeType(StrokeType.OUTSIDE); // Устанавливаем тип обводки
         root.getChildren().add(descriptionLabel);
 
+        Scene scene = new Scene(root, 1200, 900); // Основное окно
 
-
-        Scene scene = new Scene(root, 1200, 900);
-
-        Rectangle rectangle = new Rectangle();
-        Text times = new Text("Тime: ");
+        Rectangle rectangle = new Rectangle(); // Окно для информации о времени
+        Text times = new Text(); // Текст для информации о времени
 
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.B) {
-                simulationStartTime = System.currentTimeMillis();
-                habitat.startSimulation();
+                simulationStartTime = System.currentTimeMillis(); // Запускаем таймер
+                habitat.startSimulation(); // Запускаем симуляцию
             }
             else if (event.getCode() == KeyCode.E) {
-                habitat.stopSimulation();
+                habitat.stopSimulation(); // Останавливаем симуляцию
             }
             else if (event.getCode() == KeyCode.T) {
-                boolean isRectangleShown = root.getChildren().contains(rectangle);
+                boolean isRectangleShown = root.getChildren().contains(rectangle); // Ключ для открытия/закрытия инфы
 
                 if (!isRectangleShown) {
-                    StackPane.setAlignment(rectangle, Pos.TOP_LEFT);
+                    StackPane.setAlignment(rectangle, Pos.TOP_LEFT); // Отменяем центрирование
                     rectangle.setTranslateX(1000); // Устанавливаем координату X
                     rectangle.setTranslateY(0); // Устанавливаем координату Y
                     rectangle.setWidth(200); // Устанавливаем ширину
                     rectangle.setHeight(50); // Устанавливаем высоту
                     rectangle.setFill(Color.WHITE);// Устанавливаем цвет заливки прямоугольника
-                    root.getChildren().add(rectangle);// Добавляем прямоугольник на сцену или другой контейнер
+                    root.getChildren().add(rectangle);// Добавляем прямоугольник на сцену
 
-                    long simulationEndTime = System.currentTimeMillis();
+                    long simulationEndTime = System.currentTimeMillis(); // Конечное время
                     long simulationTime = (simulationEndTime - simulationStartTime) / 1000;
 
 
-                    StackPane.setAlignment(times, Pos.TOP_LEFT);
-                    times.setFont(Font.font("Arial Rounded MT", 20)); // устанавливаем шрифт Arial Rounded MT размером 35
-                    times.setFill(Color.BLACK); // устанавливаем цвет текста на наш свой собственный цвет
+                    StackPane.setAlignment(times, Pos.TOP_LEFT); // Отменяем центрирование
+                    times.setFont(Font.font("Arial Rounded MT", 20)); // устанавливаем шрифт Arial Rounded MT размером 20
+                    times.setFill(Color.BLACK); // устанавливаем цвет текста
                     times.setTranslateX(1005); // Устанавливаем координату X
                     times.setTranslateY(10); // Устанавливаем координату Y
                     root.getChildren().add(times);
@@ -83,21 +82,20 @@ public class AntSimulation extends Application {
                             times.setText("Time: " + simulationTime); // Обновляем текст с текущим временем
                         }
                     };
-                    // Начинаем таймер
-                    timer.start();
+                    timer.start(); // Начинаем таймер
                 }
                 else {
-                    // Если прямоугольник уже отображен, скрываем его
-                    root.getChildren().remove(rectangle);
-                    // Удаляем текст
-                    root.getChildren().remove(times);
+                    root.getChildren().remove(rectangle); // Если прямоугольник уже отображен, скрываем его
+                    root.getChildren().remove(times); // Удаляем текст
                 }
 
             }
             root.getChildren().remove(descriptionLabel);
         });
 
-        primaryStage.setTitle("Ant Simulation");
+        // Добавление иконки
+        primaryStage.getIcons().add(new Image("icon_ant.png")); // Установка иконки
+        primaryStage.setTitle("Ant Simulation"); // Установка названия программы
         primaryStage.setScene(scene);
         primaryStage.show();
     }

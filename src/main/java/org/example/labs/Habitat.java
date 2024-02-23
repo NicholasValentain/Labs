@@ -9,6 +9,9 @@ import javafx.scene.Node;
 import java.util.ArrayList; // Добавим импорт для ArrayList
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 
 import java.util.Random;
 
@@ -19,6 +22,7 @@ class Habitat {
     private List<Ant> ants; // Добавим объявление переменной ants
     private long simulationStartTime; // Время начала симуляции
     private Label statisticsLabel; // Label для вывода статистики
+    private Rectangle statisticsRectangle; // Rectangle для вывода статистики
 
     private static final int N1 = 5; // Интервал для рабочих муравьев (в секундах)
     private static final double P1 = 0.3; // Вероятность для рабочих муравьев
@@ -31,12 +35,14 @@ class Habitat {
         this.simulationTimer = createSimulationTimer();
         this.ants = new ArrayList<>(); // Инициализируем переменную ants
         this.statisticsLabel = new Label();
+        this.statisticsRectangle = new Rectangle();
     }
 
     public void startSimulation() {
         simulationStartTime = System.currentTimeMillis();
         ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
+        root.getChildren().remove(statisticsRectangle);
         simulationTimer.start();
     }
 
@@ -101,6 +107,13 @@ class Habitat {
 
         // Выводим статистику
         statisticsLabel.setText(statistics);
+        statisticsLabel.setFont(Font.font("Arial Rounded MT", 25)); // устанавливаем шрифт Arial Rounded MT размером 35
+
+        statisticsRectangle.setWidth(500); // Устанавливаем ширину
+        statisticsRectangle.setHeight(200); // Устанавливаем высоту
+        statisticsRectangle.setFill(Color.WHITE);// Устанавливаем цвет заливки прямоугольника
+
+        root.getChildren().add(statisticsRectangle);// Добавляем прямоугольник на сцену или другой контейнер
         root.getChildren().add(statisticsLabel);
     }
 
