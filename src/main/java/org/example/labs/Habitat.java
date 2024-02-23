@@ -3,6 +3,7 @@ package org.example.labs;
 import java.util.List;
 
 import javafx.animation.AnimationTimer;
+import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Node;
 import java.util.ArrayList; // Добавим импорт для ArrayList
@@ -35,6 +36,7 @@ class Habitat {
     public void startSimulation() {
         simulationStartTime = System.currentTimeMillis();
         ants.clear(); // Очищаем список муравьев
+        statisticsLabel.setText("");
         simulationTimer.start();
     }
 
@@ -68,9 +70,12 @@ class Habitat {
     }
 
     private void spawnAnt(Ant ant) {
-        ant.getImageView().setTranslateX(random.nextDouble() * 600);
-        ant.getImageView().setTranslateY(random.nextDouble() * 400);
+        // Отменяем центрирование только для добавленных муравьев
+        StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
+        ant.getImageView().setTranslateX(random.nextDouble() * 1150);
+        ant.getImageView().setTranslateY(random.nextDouble() * 850);
         root.getChildren().add(ant.getImageView());
+        ants.add(ant);
     }
 
     private void updateStatistics() {

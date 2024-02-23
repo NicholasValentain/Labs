@@ -22,7 +22,6 @@ abstract class Ant implements IBehaviour {
     public ImageView getImageView() {
         return imageView;
     }
-
     @Override
     public abstract void move();
 }
@@ -32,7 +31,7 @@ class WorkerAnt extends Ant {
     private Random random;
 
     public WorkerAnt() {
-        super("/ant_worker.gif");
+        super("/ant1.gif");
         this.random = new Random();
     }
 
@@ -57,7 +56,7 @@ class WarriorAnt extends Ant {
     private Random random;
 
     public WarriorAnt() {
-        super("/ant_warrior.gif");
+        super("/ant2.gif");
         this.random = new Random();
     }
 
