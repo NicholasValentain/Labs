@@ -25,7 +25,7 @@ public class AntSimulation extends Application {
     @Override
     public void start(Stage primaryStage) {
         StackPane root = new StackPane();
-        root.setStyle("-fx-background-image: url('soil2.png'); -fx-background-size: cover;"); // Установка фона
+        root.setStyle("-fx-background-image: url('soil2.png'); -fx-background-size: cover;"); // Установка фона окна
         Habitat habitat = new Habitat(root);
 
         Text descriptionText = new Text("Press 'B' to start simulation, 'E' to stop simulation");
