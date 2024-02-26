@@ -54,7 +54,7 @@ public class AntSimulation extends Application {
                 habitat.stopSimulation(); // Останавливаем симуляцию
             }
             else if (event.getCode() == KeyCode.T && startFlag) {
-                boolean isRectangleShown = root.getChildren().contains(rectangle); // Ключ для открытия/закрытия инфы
+                boolean isRectangleShown = root.getChildren().contains(rectangle); // Ключ для открытия/закрытия информации
 
                 if (!isRectangleShown) {
                     StackPane.setAlignment(rectangle, Pos.TOP_LEFT); // Отменяем центрирование
