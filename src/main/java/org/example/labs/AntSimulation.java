@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 
 public class AntSimulation extends Application {
     private long simulationStartTime; // Время начала симуляции
+    private boolean startFlag = false; // Флаг для проверки работы симуляции
     public static void main(String[] args) {
         launch(args);
     }
@@ -26,17 +27,17 @@ public class AntSimulation extends Application {
     @Override
     public void start(Stage primaryStage) {
         StackPane root = new StackPane();
-        root.setStyle("-fx-background-image: url('soil.png'); -fx-background-size: cover;"); // Установка фона
+        root.setStyle("-fx-background-image: url('soil2.png'); -fx-background-size: cover;"); // Установка фона
         Habitat habitat = new Habitat(root);
 
-        Text descriptionLabel = new Text("Press 'B' to start simulation, 'E' to stop simulation");
-        descriptionLabel.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35
+        Text descriptionText = new Text("Press 'B' to start simulation, 'E' to stop simulation");
+        descriptionText.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35
         Color customColor = Color.rgb(215,125,49); // Создаем свой собственный цвет
-        descriptionLabel.setFill(customColor); // Устанавливаем цвет текста на наш
-        descriptionLabel.setStroke(Color.BLACK); // Устанавливаем чёрный контур
-        descriptionLabel.setStrokeWidth(2.0); // Устанавливаем толщину обводки
-        descriptionLabel.setStrokeType(StrokeType.OUTSIDE); // Устанавливаем тип обводки
-        root.getChildren().add(descriptionLabel);
+        descriptionText.setFill(customColor); // Устанавливаем цвет текста на наш
+        descriptionText.setStroke(Color.BLACK); // Устанавливаем чёрный контур
+        descriptionText.setStrokeWidth(2.0); // Устанавливаем толщину обводки
+        descriptionText.setStrokeType(StrokeType.OUTSIDE); // Устанавливаем тип обводки
+        root.getChildren().add(descriptionText);
 
         Scene scene = new Scene(root, 1200, 900); // Основное окно
 
@@ -44,14 +45,17 @@ public class AntSimulation extends Application {
         Text times = new Text(); // Текст для информации о времени
 
         scene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.B) {
+            if (event.getCode() == KeyCode.B && !startFlag) {
+                startFlag = true;
+                root.getChildren().remove(descriptionText);
                 simulationStartTime = System.currentTimeMillis(); // Запускаем таймер
                 habitat.startSimulation(); // Запускаем симуляцию
             }
-            else if (event.getCode() == KeyCode.E) {
+            else if (event.getCode() == KeyCode.E && startFlag) {
+                startFlag = false;
                 habitat.stopSimulation(); // Останавливаем симуляцию
             }
-            else if (event.getCode() == KeyCode.T) {
+            else if (event.getCode() == KeyCode.T && startFlag) {
                 boolean isRectangleShown = root.getChildren().contains(rectangle); // Ключ для открытия/закрытия инфы
 
                 if (!isRectangleShown) {
@@ -62,10 +66,6 @@ public class AntSimulation extends Application {
                     rectangle.setHeight(50); // Устанавливаем высоту
                     rectangle.setFill(Color.WHITE);// Устанавливаем цвет заливки прямоугольника
                     root.getChildren().add(rectangle);// Добавляем прямоугольник на сцену
-
-                    long simulationEndTime = System.currentTimeMillis(); // Конечное время
-                    long simulationTime = (simulationEndTime - simulationStartTime) / 1000;
-
 
                     StackPane.setAlignment(times, Pos.TOP_LEFT); // Отменяем центрирование
                     times.setFont(Font.font("Arial Rounded MT", 20)); // устанавливаем шрифт Arial Rounded MT размером 20
@@ -90,7 +90,6 @@ public class AntSimulation extends Application {
                 }
 
             }
-            root.getChildren().remove(descriptionLabel);
         });
 
         // Добавление иконки
