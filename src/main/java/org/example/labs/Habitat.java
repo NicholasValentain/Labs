@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
-import javafx.scene.Node;
 import java.util.ArrayList; // Добавим импорт для ArrayList
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -23,7 +22,6 @@ class Habitat {
     private long simulationStartTime; // Время начала симуляции
     private Label statisticsLabel; // Label для вывода статистики
     private Rectangle statisticsRectangle; // Rectangle для вывода статистики
-
     private static final int N1 = 5; // Интервал для рабочих муравьев (в секундах)
     private static final double P1 = 0.3; // Вероятность для рабочих муравьев
     private static final int N2 = 3; // интервал для муравьев-воинов (в секундах)
