@@ -8,8 +8,8 @@
 
 <Pane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.labs.buttons.button">
     <children>
-        <Button text="Click!" onAction="#click" fx:id="btnStart" layoutX="1250" layoutY="100" prefWidth="150" prefHeight="75"/>
-        <Button text="Click!" onAction="#click" fx:id="btnStop" layoutX="1410" layoutY="100" prefWidth="150" prefHeight="75"/>
+        <Button text="Start!" onAction="#click" fx:id="btnStart" layoutX="700" layoutY="100" prefWidth="150" prefHeight="75"/>
+        <Button text="Stop!" onAction="#click" fx:id="btnStop" layoutX="700" layoutY="200" prefWidth="150" prefHeight="75"/>
     </children>
 </Pane>
 

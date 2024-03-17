@@ -45,7 +45,7 @@ public class Habitat {
         AntList.getChildren().clear();
         ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
-        root.getChildren().add(AntList);
+        // root.getChildren().add(AntList);
         root.getChildren().remove(statisticsRectangle);
         root.getChildren().remove(statisticsLabel);
         simulationTimer.start();
@@ -53,7 +53,7 @@ public class Habitat {
 
     public void stopSimulation() {
         simulationTimer.stop();
-        //root.getChildren().clear();
+        // root.getChildren().clear();
         root.getChildren().remove(AntList);
         AntList.getChildren().clear();
         updateStatistics();
@@ -85,9 +85,9 @@ public class Habitat {
     private void spawnAnt(Ant ant) {
         // Отменяем центрирование только для добавленных муравьев
         StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
-        ant.getImageView().setTranslateX(random.nextDouble() * 1150);
-        ant.getImageView().setTranslateY(random.nextDouble() * 850);
-        //root.getChildren().add(ant.getImageView());
+        ant.getImageView().setTranslateX(random.nextDouble() * 600);
+        ant.getImageView().setTranslateY(random.nextDouble() * 550);
+        // root.getChildren().add(ant.getImageView());
         AntList.getChildren().add(ant.getImageView());
         ants.add(ant);
     }
@@ -108,7 +108,7 @@ public class Habitat {
         }
 
         // Очищаем root от всех элементов, включая статистику
-        //root.getChildren().clear();
+        // root.getChildren().clear();
 
         String statistics = String.format("Simulation Time: %d seconds\nWorker Ants: %d\nWarrior Ants: %d",
                 simulationTime, workerAntsCount, warriorAntsCount);
