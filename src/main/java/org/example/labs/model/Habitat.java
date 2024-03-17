@@ -4,6 +4,8 @@ import java.util.List;
 
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import java.util.ArrayList; // Добавим импорт для ArrayList
 import javafx.scene.control.Label;
@@ -16,6 +18,7 @@ import java.util.Random;
 
 public class Habitat {
     private StackPane root;
+    private StackPane AntList;
     private Random random;
     private AnimationTimer simulationTimer;
     private List<Ant> ants; // Добавим объявление переменной ants
@@ -29,6 +32,7 @@ public class Habitat {
 
     public Habitat(StackPane root) {
         this.root = root;
+        AntList = new StackPane();
         this.random = new Random();
         this.simulationTimer = createSimulationTimer();
         this.ants = new ArrayList<>(); // Инициализируем переменную ants
@@ -38,15 +42,20 @@ public class Habitat {
 
     public void startSimulation() {
         simulationStartTime = System.currentTimeMillis();
+        AntList.getChildren().clear();
         ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
+        root.getChildren().add(AntList);
         root.getChildren().remove(statisticsRectangle);
+        root.getChildren().remove(statisticsLabel);
         simulationTimer.start();
     }
 
     public void stopSimulation() {
         simulationTimer.stop();
-        root.getChildren().clear();
+        //root.getChildren().clear();
+        root.getChildren().remove(AntList);
+        AntList.getChildren().clear();
         updateStatistics();
     }
 
@@ -78,7 +87,8 @@ public class Habitat {
         StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
         ant.getImageView().setTranslateX(random.nextDouble() * 1150);
         ant.getImageView().setTranslateY(random.nextDouble() * 850);
-        root.getChildren().add(ant.getImageView());
+        //root.getChildren().add(ant.getImageView());
+        AntList.getChildren().add(ant.getImageView());
         ants.add(ant);
     }
 
@@ -98,7 +108,7 @@ public class Habitat {
         }
 
         // Очищаем root от всех элементов, включая статистику
-        root.getChildren().clear();
+        //root.getChildren().clear();
 
         String statistics = String.format("Simulation Time: %d seconds\nWorker Ants: %d\nWarrior Ants: %d",
                 simulationTime, workerAntsCount, warriorAntsCount);
