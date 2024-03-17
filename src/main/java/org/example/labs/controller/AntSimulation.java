@@ -23,6 +23,7 @@ import java.io.IOException;
 public class AntSimulation extends Application {
     private long simulationStartTime; // Время начала симуляции
     private boolean startFlag = false; // Флаг для проверки работы симуляции
+    private StackPane AntList = new StackPane();
     public static void main(String[] args) {
         launch(args);
     }
@@ -38,7 +39,10 @@ public class AntSimulation extends Application {
         root.setBackground(bGround);
         //root.setStyle("-fx-background-image: url('/org/example/labs/Background/soil2.png'); -fx-background-size: cover;"); // Установка фона окна
 
-        Habitat habitat = new Habitat(root);
+
+        root.getChildren().add(AntList);
+
+        Habitat habitat = new Habitat(root, AntList);
 
         Text descriptionText = new Text("Press 'B' to start simulation, 'E' to stop simulation");
         descriptionText.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35

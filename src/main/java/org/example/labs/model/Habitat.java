@@ -30,9 +30,9 @@ public class Habitat {
     private static final int N2 = 3; // интервал для муравьев-воинов (в секундах)
     private static final double P2 = 0.5; // вероятность для муравьев-воинов
 
-    public Habitat(StackPane root) {
+    public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
-        AntList = new StackPane();
+        this.AntList = AntList;
         this.random = new Random();
         this.simulationTimer = createSimulationTimer();
         this.ants = new ArrayList<>(); // Инициализируем переменную ants
@@ -45,7 +45,6 @@ public class Habitat {
         AntList.getChildren().clear();
         ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
-        root.getChildren().add(AntList);
         root.getChildren().remove(statisticsRectangle);
         root.getChildren().remove(statisticsLabel);
         simulationTimer.start();
@@ -54,7 +53,6 @@ public class Habitat {
     public void stopSimulation() {
         simulationTimer.stop();
         //root.getChildren().clear();
-        root.getChildren().remove(AntList);
         AntList.getChildren().clear();
         updateStatistics();
     }
