@@ -25,6 +25,8 @@ public class Habitat {
     private long simulationStartTime; // Время начала симуляции
     private Label statisticsLabel; // Label для вывода статистики
     private Rectangle statisticsRectangle; // Rectangle для вывода статистики
+    public boolean moreInfo;
+    private boolean startFlag; // Флаг для проверки работы симуляции
     private static final int N1 = 5; // Интервал для рабочих муравьев (в секундах)
     private static final double P1 = 0.3; // Вероятность для рабочих муравьев
     private static final int N2 = 3; // интервал для муравьев-воинов (в секундах)
@@ -54,7 +56,7 @@ public class Habitat {
         simulationTimer.stop();
         //root.getChildren().clear();
         AntList.getChildren().clear();
-        updateStatistics();
+        if(moreInfo) updateStatistics();
     }
 
     private AnimationTimer createSimulationTimer() {
@@ -105,11 +107,20 @@ public class Habitat {
             }
         }
 
-        // Очищаем root от всех элементов, включая статистику
-        //root.getChildren().clear();
+        String simulationTimeString;
+//        if (startFlag) {
+//            simulationTimeString = String.format("Simulation Time: %d seconds\n", simulationTime);
+//        } else {
+//            simulationTimeString = "Simulation Time: 00:00:00\n"; // Если симуляция не запущена, устанавливаем время в
+//            // "00:00:00"
+//        }
+        long hours = simulationTime / 3600;
+        long minutes = (simulationTime % 3600) / 60;
+        long seconds = simulationTime % 60;
+        simulationTimeString = String.format("Time: %02d:%02d:%02d\n", hours, minutes, seconds);
 
-        String statistics = String.format("Simulation Time: %d seconds\nWorker Ants: %d\nWarrior Ants: %d",
-                simulationTime, workerAntsCount, warriorAntsCount);
+        String statistics = String.format("%sWorker Ants: %d\nWarrior Ants: %d",
+                simulationTimeString, workerAntsCount, warriorAntsCount);
 
         // Выводим статистику
         statisticsLabel.setText(statistics);

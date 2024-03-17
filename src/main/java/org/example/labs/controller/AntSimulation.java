@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -16,21 +17,28 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.example.labs.buttons.button;
 import org.example.labs.model.Habitat;
 
 import java.io.IOException;
 
 public class AntSimulation extends Application {
     private long simulationStartTime; // Время начала симуляции
-    private boolean startFlag = false; // Флаг для проверки работы симуляции
+    public boolean startFlag = false; // Флаг для проверки работы симуляции
+    private Text times; // Текст для информации о времени
+    private boolean timerVisible = true; // Флаг видимости таймера
     private StackPane AntList = new StackPane();
+    private StackPane root;
+    private Habitat habitat;
+    private Text descriptionText;
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        StackPane root = new StackPane();
+        root = new StackPane();
         Image Backgroundimg = new Image(getClass().getResourceAsStream("/org/example/labs/Background/soil2.png"));
         BackgroundSize bsize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true);
         BackgroundImage bImg = new BackgroundImage(Backgroundimg, BackgroundRepeat.NO_REPEAT,
@@ -42,9 +50,9 @@ public class AntSimulation extends Application {
 
         root.getChildren().add(AntList);
 
-        Habitat habitat = new Habitat(root, AntList);
+        habitat = new Habitat(root, AntList);
 
-        Text descriptionText = new Text("Press 'B' to start simulation, 'E' to stop simulation");
+        descriptionText = new Text("Press 'B' to start simulation, 'E' to stop simulation");
         descriptionText.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35
         StackPane.setAlignment(descriptionText, Pos.TOP_LEFT); // Отменяем центрирование
         descriptionText.setTranslateX(200); // Устанавливаем координату X
@@ -59,73 +67,48 @@ public class AntSimulation extends Application {
         Scene scene = new Scene(root, 1600, 900); // Основное окно
 
         // Окно для кнопок
-        Rectangle rectangleManagement = new Rectangle();
+        Rectangle rectangleManagement = new Rectangle(400,900,Color.WHITE);
         StackPane.setAlignment(rectangleManagement, Pos.TOP_LEFT); // Отменяем центрирование
         rectangleManagement.setTranslateX(1200); // Устанавливаем координату X
         rectangleManagement.setTranslateY(0); // Устанавливаем координату Y
-        rectangleManagement.setWidth(400); // Устанавливаем ширину
-        rectangleManagement.setHeight(900); // Устанавливаем высоту
-        rectangleManagement.setFill(Color.WHITE);// Устанавливаем цвет заливки прямоугольника
-        root.getChildren().add(rectangleManagement);// Добавляем прямоугольник на сцену
+        rectangleManagement.setFill(Color.GRAY);// Устанавливаем цвет заливки прямоугольника
 
+        rectangleManagement.setStroke(Color.BLACK);  // Установка цвета обводки
+        rectangleManagement.setStrokeWidth(5); // Установка ширины обводки
+        rectangleManagement.setStrokeType(javafx.scene.shape.StrokeType.INSIDE); // Установка типа обводки внутри
+
+        root.getChildren().add(rectangleManagement);// Добавляем прямоугольник на сцену
 
         StackPane FXMLstackPane = new StackPane();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/labs/hello-view.fxml"));
         Node buttonNode = loader.load();
-        FXMLstackPane.getChildren().add(buttonNode); // Добавление кнопки в StackPane
+        button controller = loader.getController();
+        controller.setHabitat(habitat, this);
 
-        root.getChildren().add(FXMLstackPane); // Добавление кнопок в основной StackPane
+        FXMLstackPane.getChildren().add(buttonNode);
+        root.getChildren().add(FXMLstackPane);
 
-        Rectangle rectangleTime = new Rectangle(); // Окно для информации о времени
-        Text times = new Text(); // Текст для информации о времени
+        times = new Text("Time: 00:00:00"); // Текст для информации о времени
+        times.setFont(Font.font("Arial Rounded MT", 35)); // устанавливаем шрифт Arial Rounded MT размером 20
+        times.setFill(Color.BLACK); // устанавливаем цвет текста
+        StackPane.setAlignment(times, Pos.TOP_LEFT);
+        times.setTranslateX(1300); // Устанавливаем координату X
+        times.setTranslateY(800); // Устанавливаем координату Y
+        root.getChildren().add(times);
 
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.B && !startFlag) {
-                startFlag = true;
-                root.getChildren().remove(descriptionText);
-                simulationStartTime = System.currentTimeMillis(); // Запускаем таймер
-                habitat.startSimulation(); // Запускаем симуляцию
-            }
-            else if (event.getCode() == KeyCode.E && startFlag) {
-                startFlag = false;
-                root.getChildren().remove(rectangleTime); // Если прямоугольник уже отображен, скрываем его
-                root.getChildren().remove(times); // Удаляем текст
-                habitat.stopSimulation(); // Останавливаем симуляцию
-            }
-            else if (event.getCode() == KeyCode.T && startFlag) {
-                boolean isRectangleShown = root.getChildren().contains(rectangleTime); // Ключ для открытия/закрытия информации
-
-                if (!isRectangleShown) {
-                    StackPane.setAlignment(rectangleTime, Pos.TOP_LEFT); // Отменяем центрирование
-                    rectangleTime.setTranslateX(1000); // Устанавливаем координату X
-                    rectangleTime.setTranslateY(0); // Устанавливаем координату Y
-                    rectangleTime.setWidth(200); // Устанавливаем ширину
-                    rectangleTime.setHeight(50); // Устанавливаем высоту
-                    rectangleTime.setFill(Color.WHITE);// Устанавливаем цвет заливки прямоугольника
-                    root.getChildren().add(rectangleTime);// Добавляем прямоугольник на сцену
-
-                    StackPane.setAlignment(times, Pos.TOP_LEFT); // Отменяем центрирование
-                    times.setFont(Font.font("Arial Rounded MT", 20)); // устанавливаем шрифт Arial Rounded MT размером 20
-                    times.setFill(Color.BLACK); // устанавливаем цвет текста
-                    times.setTranslateX(1005); // Устанавливаем координату X
-                    times.setTranslateY(10); // Устанавливаем координату Y
+                startSimulation();
+            } else if (event.getCode() == KeyCode.E && startFlag) {
+                stopSimulation();
+            } else if (event.getCode() == KeyCode.T && startFlag) {
+                if (timerVisible) {
+                    root.getChildren().remove(times);
+                    timerVisible = false;
+                } else {
                     root.getChildren().add(times);
-                    // Определяем таймер для обновления времени
-                    AnimationTimer timer = new AnimationTimer() {
-                        @Override
-                        public void handle(long now) {
-                            long currentTime = System.currentTimeMillis();
-                            long simulationTime = (currentTime - simulationStartTime) / 1000;
-                            times.setText("Time: " + simulationTime); // Обновляем текст с текущим временем
-                        }
-                    };
-                    timer.start(); // Начинаем таймер
+                    timerVisible = true;
                 }
-                else {
-                    root.getChildren().remove(rectangleTime); // Если прямоугольник уже отображен, скрываем его
-                    root.getChildren().remove(times); // Удаляем текст
-                }
-
             }
         });
 
@@ -135,5 +118,39 @@ public class AntSimulation extends Application {
         primaryStage.setTitle("Ant Simulation"); // Установка названия программы
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+    // Метод для запуска таймера обновления времени
+    private void startTimer() {
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                long currentTime = System.currentTimeMillis();
+                long simulationTime = (currentTime - simulationStartTime) / 1000;
+                long hours = simulationTime / 3600;
+                long minutes = (simulationTime % 3600) / 60;
+                long seconds = simulationTime % 60;
+                times.setText(String.format("Time: %02d:%02d:%02d", hours, minutes, seconds));
+            }
+        };
+        timer.start();
+    }
+
+    // Метод для остановки таймера
+    private void stopTimer() {
+        // Останавливаем таймер, просто прерывая его выполнение
+    }
+
+    public void startSimulation() {
+        startFlag = true;
+        root.getChildren().remove(descriptionText);
+        simulationStartTime = System.currentTimeMillis();
+        habitat.startSimulation();
+        startTimer(); // Запускаем таймер
+    }
+    public void stopSimulation() {
+        startFlag = false;
+        root.getChildren().remove(times);
+        habitat.stopSimulation();
+        stopTimer(); // Останавливаем таймер
     }
 }
