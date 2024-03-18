@@ -46,7 +46,6 @@ public class button {
 
     }
 
-
     @FXML
     private void click(ActionEvent event) {
         Button clickedButton = (Button) event.getSource();

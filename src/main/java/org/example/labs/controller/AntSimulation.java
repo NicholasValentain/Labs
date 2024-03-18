@@ -103,42 +103,53 @@ public class AntSimulation extends Application {
         times.setFont(Font.font("Arial Rounded MT", 35)); // устанавливаем шрифт Arial Rounded MT размером 20
         times.setFill(Color.BLACK); // устанавливаем цвет текста
         StackPane.setAlignment(times, Pos.TOP_LEFT);
-        times.setTranslateX(1300); // Устанавливаем координату X
-        times.setTranslateY(800); // Устанавливаем координату Y
+        times.setTranslateX(1280); // Устанавливаем координату X
+        times.setTranslateY(840); // Устанавливаем координату Y
         root.getChildren().add(times);
 
         scene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.B && !startFlag) {
-                controller.btnStart.setDisable(true);
-                controller.btnStop.setDisable(false);
-                controller.N1.setDisable(true);
-                controller.N2.setDisable(true);
-                controller.P1.setDisable(true);
-                controller.P2.setDisable(true);
-                controller.cbShowInfo.setDisable(true);
-                controller.checkError();
-                startSimulation();
-            } else if (event.getCode() == KeyCode.E && startFlag) {
-                controller.btnStart.setDisable(false);
-                controller.btnStop.setDisable(true);
-                controller.N1.setDisable(false);
-                controller.N2.setDisable(false);
-                controller.P1.setDisable(false);
-                controller.P2.setDisable(false);
-                controller.cbShowInfo.setDisable(false);
-                stopSimulation();
-            } else if (event.getCode() == KeyCode.T) {
-                if (timerVisible) {
-                    controller.ShowTime.setSelected(false);
-                    controller.HideTime.setSelected(true);
-                    root.getChildren().remove(times);
-                    timerVisible = false;
-                } else {
-                    controller.HideTime.setSelected(false);
-                    controller.ShowTime.setSelected(true);
-                    root.getChildren().add(times);
-                    timerVisible = true;
-                }
+
+            switch (event.getCode()) {
+                case KeyCode.B:
+                    if(!startFlag) {
+                        controller.btnStart.setDisable(true);
+                        controller.btnStop.setDisable(false);
+                        controller.N1.setDisable(true);
+                        controller.N2.setDisable(true);
+                        controller.P1.setDisable(true);
+                        controller.P2.setDisable(true);
+                        controller.cbShowInfo.setDisable(true);
+                        controller.checkError();
+                        startSimulation();
+                    }
+                    break;
+                case KeyCode.E:
+                    if(startFlag) {
+                        if(controller.cbShowInfo.isSelected()) {
+                            controller.btnStart.setDisable(true);
+                            controller.btnStop.setDisable(true);
+                        }
+                        controller.N1.setDisable(false);
+                        controller.N2.setDisable(false);
+                        controller.P1.setDisable(false);
+                        controller.P2.setDisable(false);
+                        controller.cbShowInfo.setDisable(false);
+                        stopSimulation();
+                    }
+                    break;
+                case KeyCode.T:
+                    if (timerVisible) {
+                        controller.ShowTime.setSelected(false);
+                        controller.HideTime.setSelected(true);
+                        root.getChildren().remove(times);
+                        timerVisible = false;
+                    } else {
+                        controller.HideTime.setSelected(false);
+                        controller.ShowTime.setSelected(true);
+                        root.getChildren().add(times);
+                        timerVisible = true;
+                    }
+                    break;
             }
         });
 

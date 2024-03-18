@@ -43,7 +43,7 @@ public class Habitat {
     private long simulationTimes = 0;
     private long currentTime = 0;
 
-    private Habitat(StackPane root, StackPane AntList) {
+    public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
         this.AntList = AntList;
         this.random = new Random();
@@ -52,6 +52,7 @@ public class Habitat {
         this.statisticsLabel = new Label();
         this.statisticsRectangle = new Rectangle();
     }
+    // Статический метод для получения единственного экземпляра класса
     public static Habitat getInstance(StackPane root, StackPane AntList) {
         if (instance == null) {
             instance = new Habitat(root, AntList);
