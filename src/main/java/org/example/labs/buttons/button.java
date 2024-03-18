@@ -54,7 +54,7 @@ public class button {
         Button clickedButton = (Button) event.getSource();
         switch (clickedButton.getId()) {
             case "btnStart":
-                if (habitat != null && !antSimulation.startFlag) {
+                if (habitat != null && !antSimulation.startFlag && checkError()) {
                     btnStart.setDisable(true);
                     btnStop.setDisable(false);
 
@@ -62,7 +62,6 @@ public class button {
                     N2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
-                    checkError();
                     antSimulation.startSimulation();
                 }
                 break;
@@ -85,12 +84,10 @@ public class button {
         if (ShowTime.isSelected() && !antSimulation.timerVisible) {
             antSimulation.timerVisible = true;
             antSimulation.root.getChildren().add(antSimulation.times);
-            //HideTime.setSelected(false);
         }
         else if (HideTime.isSelected() && antSimulation.timerVisible) {
             antSimulation.timerVisible = false;
             antSimulation.root.getChildren().remove(antSimulation.times);
-            //ShowTime.setSelected(false);
         }
     }
 
@@ -98,9 +95,11 @@ public class button {
     private void check() { habitat.moreInfo = cbShowInfo.isSelected(); }
 
     @FXML
-    public void checkError() {
+    public boolean checkError() {
         try {
             if(Integer.parseInt(N1.getText()) < 1 || Integer.parseInt(N2.getText()) < 1) {
+                if (Integer.parseInt(N1.getText()) < 1) N1.setText("1");
+                if (Integer.parseInt(N2.getText()) < 1) N2.setText("1");
                 throw new NumberFormatException("Число меньше 1");
             }
 
@@ -113,11 +112,13 @@ public class button {
         }
         catch (NumberFormatException ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Ошибка");
+            alert.setTitle("Ошибка!");
             alert.setHeaderText("Некорректный период рождения");
             alert.setContentText("Требуется целое положительное число!");
             alert.showAndWait();
+            return false;
         }
+        return true;
     }
 
 }

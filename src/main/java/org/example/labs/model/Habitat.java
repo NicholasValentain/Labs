@@ -4,6 +4,9 @@ import java.util.List;
 
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -14,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
+import java.util.Optional;
 import java.util.Random;
 
 public class Habitat {
@@ -115,40 +119,26 @@ public class Habitat {
             }
         }
 
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Статистика");
+        alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
+
         String simulationTimeString;
-//        if (startFlag) {
-//            simulationTimeString = String.format("Simulation Time: %d seconds\n", simulationTime);
-//        } else {
-//            simulationTimeString = "Simulation Time: 00:00:00\n"; // Если симуляция не запущена, устанавливаем время в
-//            // "00:00:00"
-//        }
         long hours = simulationTime / 3600;
         long minutes = (simulationTime % 3600) / 60;
         long seconds = simulationTime % 60;
-        simulationTimeString = String.format("Time: %02d:%02d:%02d\n", hours, minutes, seconds);
+        simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours, minutes, seconds);
 
-        String statistics = String.format("%sWorker Ants: %d\nWarrior Ants: %d",
+        String statistics = String.format("%sРабочих: %d\nСолдат Ants: %d",
                 simulationTimeString, workerAntsCount, warriorAntsCount);
 
-        // Выводим статистику
-        statisticsLabel.setText(statistics);
-        statisticsLabel.setFont(Font.font("Arial Rounded MT", 25)); // устанавливаем шрифт Arial Rounded MT размером 35
+        TextArea textArea = new TextArea(statistics);
+        textArea.setPrefColumnCount(20);
+        textArea.setPrefRowCount(5);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        alert.getDialogPane().setContent(textArea);
+        alert.showAndWait();
 
-        statisticsRectangle.setWidth(500); // Устанавливаем ширину
-        statisticsRectangle.setHeight(200); // Устанавливаем высоту
-        statisticsRectangle.setFill(Color.WHITE);// Устанавливаем цвет заливки прямоугольника
-
-        root.getChildren().add(statisticsRectangle);// Добавляем прямоугольник на сцену или другой контейнер
-        root.getChildren().add(statisticsLabel);
-    }
-
-    // Метод для поиска муравья по его ImageView
-    private Ant findAntByImageView(ImageView imageView) {
-        for (Ant ant : ants) {
-            if (ant.getImageView() == imageView) {
-                return ant;
-            }
-        }
-        return null;
     }
 }

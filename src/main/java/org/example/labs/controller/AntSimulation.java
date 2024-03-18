@@ -53,7 +53,7 @@ public class AntSimulation extends Application {
 
         habitat = new Habitat(root, AntList);
 
-        descriptionText = new Text("Press 'B' to start simulation, 'E' to stop simulation");
+        descriptionText = new Text("Нажмите 'B' чтобы начать симуляцию, 'E' чтобы остановить");
         descriptionText.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35
         StackPane.setAlignment(descriptionText, Pos.TOP_LEFT); // Отменяем центрирование
         descriptionText.setTranslateX(200); // Устанавливаем координату X
@@ -89,7 +89,7 @@ public class AntSimulation extends Application {
         FXMLstackPane.getChildren().add(buttonNode);
         root.getChildren().add(FXMLstackPane);
 
-        times = new Text("Time: 00:00:00"); // Текст для информации о времени
+        times = new Text("Время: 00:00:00"); // Текст для информации о времени
         times.setFont(Font.font("Arial Rounded MT", 35)); // устанавливаем шрифт Arial Rounded MT размером 20
         times.setFill(Color.BLACK); // устанавливаем цвет текста
         StackPane.setAlignment(times, Pos.TOP_LEFT);
@@ -147,7 +147,7 @@ public class AntSimulation extends Application {
                 long hours = simulationTime / 3600;
                 long minutes = (simulationTime % 3600) / 60;
                 long seconds = simulationTime % 60;
-                times.setText(String.format("Time: %02d:%02d:%02d", hours, minutes, seconds));
+                times.setText(String.format("Время: %02d:%02d:%02d", hours, minutes, seconds));
             }
         };
         timer.start();
@@ -160,7 +160,7 @@ public class AntSimulation extends Application {
             // Сброс начального времени симуляции до исходного значения
             simulationStartTime = System.currentTimeMillis();
             // Сброс текста отображаемого времени
-            times.setText("Time: 00:00:00");
+            times.setText("Время: 00:00:00");
         }
     }
 
