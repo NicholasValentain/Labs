@@ -25,12 +25,13 @@ import java.io.IOException;
 public class AntSimulation extends Application {
     private long simulationStartTime; // Время начала симуляции
     public boolean startFlag = false; // Флаг для проверки работы симуляции
-    private Text times; // Текст для информации о времени
-    private boolean timerVisible = true; // Флаг видимости таймера
+    public Text times; // Текст для информации о времени
+    public boolean timerVisible = true; // Флаг видимости таймера
     private StackPane AntList = new StackPane();
-    private StackPane root;
+    public StackPane root;
     private Habitat habitat;
     private Text descriptionText;
+    private AnimationTimer timer;
 
     public static void main(String[] args) {
         launch(args);
@@ -98,14 +99,31 @@ public class AntSimulation extends Application {
 
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.B && !startFlag) {
+                controller.btnStart.setDisable(true);
+                controller.btnStop.setDisable(false);
+                controller.N1.setDisable(true);
+                controller.N2.setDisable(true);
+                controller.P1.setDisable(true);
+                controller.P2.setDisable(true);
+                controller.checkError();
                 startSimulation();
             } else if (event.getCode() == KeyCode.E && startFlag) {
+                controller.btnStart.setDisable(false);
+                controller.btnStop.setDisable(true);
+                controller.N1.setDisable(false);
+                controller.N2.setDisable(false);
+                controller.P1.setDisable(false);
+                controller.P2.setDisable(false);
                 stopSimulation();
-            } else if (event.getCode() == KeyCode.T && startFlag) {
+            } else if (event.getCode() == KeyCode.T) {
                 if (timerVisible) {
+                    controller.ShowTime.setSelected(false);
+                    controller.HideTime.setSelected(true);
                     root.getChildren().remove(times);
                     timerVisible = false;
                 } else {
+                    controller.HideTime.setSelected(false);
+                    controller.ShowTime.setSelected(true);
                     root.getChildren().add(times);
                     timerVisible = true;
                 }
@@ -121,7 +139,7 @@ public class AntSimulation extends Application {
     }
     // Метод для запуска таймера обновления времени
     private void startTimer() {
-        AnimationTimer timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 long currentTime = System.currentTimeMillis();
@@ -137,7 +155,13 @@ public class AntSimulation extends Application {
 
     // Метод для остановки таймера
     private void stopTimer() {
-        // Останавливаем таймер, просто прерывая его выполнение
+        if (timer != null) {
+            timer.stop();
+            // Сброс начального времени симуляции до исходного значения
+            simulationStartTime = System.currentTimeMillis();
+            // Сброс текста отображаемого времени
+            times.setText("Time: 00:00:00");
+        }
     }
 
     public void startSimulation() {
@@ -149,7 +173,7 @@ public class AntSimulation extends Application {
     }
     public void stopSimulation() {
         startFlag = false;
-        root.getChildren().remove(times);
+        //root.getChildren().remove(times);
         habitat.stopSimulation();
         stopTimer(); // Останавливаем таймер
     }

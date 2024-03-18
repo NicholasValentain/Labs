@@ -61,33 +61,30 @@ public class Habitat {
     }
 
     private AnimationTimer createSimulationTimer() {
-        long startTime =  System.currentTimeMillis();
+        long startTime = System.nanoTime();
+        final long[] lastWorkerTime = {0};
+        final long[] lastWarriorTime = {0};
 
         return new AnimationTimer() {
             @Override
             public void handle(long now) {
-                long elapsedTimeWorker = (now - startTime) / 1000;
-                long elapsedTimeWarrior = (now - startTime) / 1000;
+                long elapsedTime = (now - startTime) / 1_000_000_000;
 
-
-                //System.out.println(pp1 + "   " + pp2);
-                //System.out.println(elapsedTimeWorker + "   " + elapsedTimeWarrior);
-                //if(pp1 <= 0.1) {System.out.println(pp1 + "  ==============================================================");}
-
-
-                if (elapsedTimeWorker % N1 == 0) {
+                // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
+                if (elapsedTime - lastWorkerTime[0] >= N1) {
                     double pp1 = random.nextDouble();
-                    if(pp1 <= P1) {
-                        System.out.println(pp1 + " " + elapsedTimeWorker% N1 + " " + (now - startTime/ 1000));
+                    if (pp1 <= P1) {
                         spawnAnt(new WorkerAnt());
                     }
-
+                    lastWorkerTime[0] = elapsedTime;
                 }
 
-                if (elapsedTimeWorker % N2 == 0) {
-                    if(random.nextDouble() <= P2) {
+                // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
+                if (elapsedTime - lastWarriorTime[0] >= N2) {
+                    if (random.nextDouble() <= P2) {
                         spawnAnt(new WarriorAnt());
                     }
+                    lastWarriorTime[0] = elapsedTime;
                 }
             }
         };

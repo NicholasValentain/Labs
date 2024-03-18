@@ -17,19 +17,15 @@ import java.util.Random;
 
 public class button {
     @FXML
-    private Button btnStart;
+    public Button btnStart, btnStop;
     @FXML
-    private Button btnStop;
+    public RadioButton ShowTime, HideTime;
     @FXML
-    private RadioButton btnShowInfo, btnShowTime, btnHideTime;
+    public CheckBox cbShowInfo;
     @FXML
-    private CheckBox cbShowInfo;
+    public TextField N1, N2;
     @FXML
-    private TextField N1, N2;
-    @FXML
-    private ComboBox P1, P2;
-    private int plusOne = 0;
-    private int minusOne = 0;
+    public ComboBox P1, P2;
     private Habitat habitat; // Добавляем поле для хранения ссылки на habitat
     private AntSimulation antSimulation;
 
@@ -43,11 +39,13 @@ public class button {
         this.antSimulation = antSimulation;
         N1.setText("1");
         N2.setText("1");
+        ShowTime.setSelected(true);
         // Установка списка элементов в ComboBox
         P1.setItems(options);
         P2.setItems(options);
         P1.setValue("10");
         P2.setValue("100");
+
     }
 
 
@@ -82,12 +80,25 @@ public class button {
                 break;
         }
     }
+    @FXML
+    private void clickTimeSwitch() {
+        if (ShowTime.isSelected() && !antSimulation.timerVisible) {
+            antSimulation.timerVisible = true;
+            antSimulation.root.getChildren().add(antSimulation.times);
+            //HideTime.setSelected(false);
+        }
+        else if (HideTime.isSelected() && antSimulation.timerVisible) {
+            antSimulation.timerVisible = false;
+            antSimulation.root.getChildren().remove(antSimulation.times);
+            //ShowTime.setSelected(false);
+        }
+    }
 
     @FXML
     private void check() { habitat.moreInfo = cbShowInfo.isSelected(); }
 
     @FXML
-    private void checkError() {
+    public void checkError() {
         try {
             if(Integer.parseInt(N1.getText()) < 1 || Integer.parseInt(N2.getText()) < 1) {
                 throw new NumberFormatException("Число меньше 1");
