@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -62,7 +61,7 @@ public class AntSimulation extends Application {
 
 
         root.getChildren().add(AntList);
-        habitat = new Habitat(root, AntList);
+        habitat = Habitat.getInstance(root, AntList);
 
         descriptionText = new Text("Нажмите 'B' чтобы начать симуляцию, 'E' чтобы остановить");
         descriptionText.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35

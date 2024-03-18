@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Random;
 
 public class Habitat {
+    private static Habitat instance; // Статическое поле для хранения единственного экземпляра
     private StackPane root;
     private StackPane AntList;
     private Random random;
@@ -42,7 +43,7 @@ public class Habitat {
     private long simulationTimes = 0;
     private long currentTime = 0;
 
-    public Habitat(StackPane root, StackPane AntList) {
+    private Habitat(StackPane root, StackPane AntList) {
         this.root = root;
         this.AntList = AntList;
         this.random = new Random();
@@ -50,6 +51,12 @@ public class Habitat {
         this.ants = new ArrayList<>(); // Инициализируем переменную ants
         this.statisticsLabel = new Label();
         this.statisticsRectangle = new Rectangle();
+    }
+    public static Habitat getInstance(StackPane root, StackPane AntList) {
+        if (instance == null) {
+            instance = new Habitat(root, AntList);
+        }
+        return instance;
     }
 
     public void startSimulation() {
