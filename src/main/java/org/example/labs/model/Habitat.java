@@ -55,22 +55,24 @@ public class Habitat {
 
     public void stopSimulation() {
         simulationTimer.stop();
-        //root.getChildren().clear();
+        // root.getChildren().clear();
         AntList.getChildren().clear();
-        if(moreInfo) updateStatistics();
+        if (moreInfo)
+            updateStatistics();
     }
 
     private AnimationTimer createSimulationTimer() {
         long startTime = System.nanoTime();
-        final long[] lastWorkerTime = {0};
-        final long[] lastWarriorTime = {0};
+        final long[] lastWorkerTime = { 0 };
+        final long[] lastWarriorTime = { 0 };
 
         return new AnimationTimer() {
             @Override
             public void handle(long now) {
                 long elapsedTime = (now - startTime) / 1_000_000_000;
 
-                // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
+                // Проверяем, прошло ли достаточно времени с момента последнего выполнения
+                // условия для рабочего муравья
                 if (elapsedTime - lastWorkerTime[0] >= N1) {
                     double pp1 = random.nextDouble();
                     if (pp1 <= P1) {
@@ -79,7 +81,8 @@ public class Habitat {
                     lastWorkerTime[0] = elapsedTime;
                 }
 
-                // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
+                // Проверяем, прошло ли достаточно времени с момента последнего выполнения
+                // условия для воинственного муравья
                 if (elapsedTime - lastWarriorTime[0] >= N2) {
                     if (random.nextDouble() <= P2) {
                         spawnAnt(new WarriorAnt());
@@ -93,9 +96,9 @@ public class Habitat {
     private void spawnAnt(Ant ant) {
         // Отменяем центрирование только для добавленных муравьев
         StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
-        ant.getImageView().setTranslateX(random.nextDouble() * 1150);
-        ant.getImageView().setTranslateY(random.nextDouble() * 850);
-        //root.getChildren().add(ant.getImageView());
+        ant.getImageView().setTranslateX(random.nextDouble() * 550);
+        ant.getImageView().setTranslateY(random.nextDouble() * 350);
+        // root.getChildren().add(ant.getImageView());
         AntList.getChildren().add(ant.getImageView());
         ants.add(ant);
     }
@@ -116,12 +119,14 @@ public class Habitat {
         }
 
         String simulationTimeString;
-//        if (startFlag) {
-//            simulationTimeString = String.format("Simulation Time: %d seconds\n", simulationTime);
-//        } else {
-//            simulationTimeString = "Simulation Time: 00:00:00\n"; // Если симуляция не запущена, устанавливаем время в
-//            // "00:00:00"
-//        }
+        // if (startFlag) {
+        // simulationTimeString = String.format("Simulation Time: %d seconds\n",
+        // simulationTime);
+        // } else {
+        // simulationTimeString = "Simulation Time: 00:00:00\n"; // Если симуляция не
+        // запущена, устанавливаем время в
+        // // "00:00:00"
+        // }
         long hours = simulationTime / 3600;
         long minutes = (simulationTime % 3600) / 60;
         long seconds = simulationTime % 60;
@@ -140,15 +145,5 @@ public class Habitat {
 
         root.getChildren().add(statisticsRectangle);// Добавляем прямоугольник на сцену или другой контейнер
         root.getChildren().add(statisticsLabel);
-    }
-
-    // Метод для поиска муравья по его ImageView
-    private Ant findAntByImageView(ImageView imageView) {
-        for (Ant ant : ants) {
-            if (ant.getImageView() == imageView) {
-                return ant;
-            }
-        }
-        return null;
     }
 }

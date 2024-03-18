@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import org.example.labs.model.Habitat; // Импортируем класс Habitat
@@ -13,7 +12,6 @@ import org.example.labs.controller.AntSimulation;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 
 public class button {
     @FXML
@@ -31,7 +29,7 @@ public class button {
 
     // Создание списка элементов для ComboBox
     ObservableList<String> options = FXCollections.observableArrayList(
-            "10", "20", "30", "40", "50", "60", "70", "80", "90", "100" );
+            "10", "20", "30", "40", "50", "60", "70", "80", "90", "100");
 
     // Метод для установки ссылки на habitat
     public void setHabitat(Habitat habitat, AntSimulation antSimulation) {
@@ -47,7 +45,6 @@ public class button {
         P2.setValue("100");
 
     }
-
 
     @FXML
     private void click(ActionEvent event) {
@@ -80,27 +77,29 @@ public class button {
                 break;
         }
     }
+
     @FXML
     private void clickTimeSwitch() {
         if (ShowTime.isSelected() && !antSimulation.timerVisible) {
             antSimulation.timerVisible = true;
             antSimulation.root.getChildren().add(antSimulation.times);
-            //HideTime.setSelected(false);
-        }
-        else if (HideTime.isSelected() && antSimulation.timerVisible) {
+            // HideTime.setSelected(false);
+        } else if (HideTime.isSelected() && antSimulation.timerVisible) {
             antSimulation.timerVisible = false;
             antSimulation.root.getChildren().remove(antSimulation.times);
-            //ShowTime.setSelected(false);
+            // ShowTime.setSelected(false);
         }
     }
 
     @FXML
-    private void check() { habitat.moreInfo = cbShowInfo.isSelected(); }
+    private void check() {
+        habitat.moreInfo = cbShowInfo.isSelected();
+    }
 
     @FXML
     public void checkError() {
         try {
-            if(Integer.parseInt(N1.getText()) < 1 || Integer.parseInt(N2.getText()) < 1) {
+            if (Integer.parseInt(N1.getText()) < 1 || Integer.parseInt(N2.getText()) < 1) {
                 throw new NumberFormatException("Число меньше 1");
             }
 
@@ -110,14 +109,83 @@ public class button {
             habitat.P1 = Double.parseDouble((String) P1.getValue()) / 100;
             habitat.P2 = Double.parseDouble((String) P2.getValue()) / 100;
 
-        }
-        catch (NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Ошибка");
             alert.setHeaderText("Некорректный период рождения");
             alert.setContentText("Требуется целое положительное число!");
             alert.showAndWait();
         }
+    }
+
+    @FXML
+    private void handleMenuAction(ActionEvent event) {
+        MenuItem menuItem = (MenuItem) event.getSource();
+        switch (menuItem.getText()) {
+            case "Выход":
+                System.exit(0);
+                break;
+            case "Старт (B)":
+                if (habitat != null && !antSimulation.startFlag) {
+                    btnStart.setDisable(true);
+                    btnStop.setDisable(false);
+
+                    N1.setDisable(true);
+                    N2.setDisable(true);
+                    P1.setDisable(true);
+                    P2.setDisable(true);
+                    checkError();
+                    antSimulation.startSimulation();
+                }
+                break;
+            case "Стоп (E)":
+                if (habitat != null && antSimulation.startFlag) {
+                    btnStart.setDisable(false);
+                    btnStop.setDisable(true);
+
+                    N1.setDisable(false);
+                    N2.setDisable(false);
+                    P1.setDisable(false);
+                    P2.setDisable(false);
+                    antSimulation.stopSimulation();
+                }
+                break;
+        }
+    }
+
+    @FXML
+    private void clickTime() {
+        // Изменяем состояние видимости таймера и обновляем чекбоксы
+        if (antSimulation.timerVisible) {
+            antSimulation.root.getChildren().remove(antSimulation.times);
+            antSimulation.timerVisible = false;
+            HideTime.setSelected(true);
+            ShowTime.setSelected(false);
+        } else {
+            antSimulation.root.getChildren().add(antSimulation.times);
+            antSimulation.timerVisible = true;
+            ShowTime.setSelected(true);
+            HideTime.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void handleTimerMenuAction(ActionEvent event) {
+        MenuItem menuItem = (MenuItem) event.getSource();
+        if ("Показать/Скрыть (T)".equals(menuItem.getText())) {
+            if (antSimulation != null) {
+                // Изменяем состояние видимости таймера и обновляем чекбоксы
+                antSimulation.setTimerVisible(!antSimulation.isTimerVisible());
+                ShowTime.setSelected(antSimulation.isTimerVisible());
+                HideTime.setSelected(!antSimulation.isTimerVisible());
+            }
+        }
+    }
+
+    @FXML
+    private void clickInf() {
+        cbShowInfo.setSelected(!habitat.moreInfo);
+        habitat.moreInfo = !habitat.moreInfo;
     }
 
 }

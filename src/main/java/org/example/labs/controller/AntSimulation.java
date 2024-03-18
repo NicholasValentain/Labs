@@ -1,6 +1,5 @@
 package org.example.labs.controller;
 
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +32,16 @@ public class AntSimulation extends Application {
     private Text descriptionText;
     private AnimationTimer timer;
 
+    // Геттер для переменной timerVisible
+    public boolean isTimerVisible() {
+        return timerVisible;
+    }
+
+    // Метод для установки переменной timerVisible
+    public void setTimerVisible(boolean visible) {
+        this.timerVisible = visible;
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -46,35 +55,36 @@ public class AntSimulation extends Application {
                 BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, bsize);
         Background bGround = new Background(bImg);
         root.setBackground(bGround);
-        //root.setStyle("-fx-background-image: url('/org/example/labs/Background/soil2.png'); -fx-background-size: cover;"); // Установка фона окна
-
+        // root.setStyle("-fx-background-image:
+        // url('/org/example/labs/Background/soil2.png'); -fx-background-size: cover;");
+        // // Установка фона окна
 
         root.getChildren().add(AntList);
 
         habitat = new Habitat(root, AntList);
 
-        descriptionText = new Text("Press 'B' to start simulation, 'E' to stop simulation");
-        descriptionText.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35
+        descriptionText = new Text("Нажмите 'B' для запуска симуляции, 'E' для остановки симуляции");
+        descriptionText.setFont(Font.font("Arial Rounded MT", 25)); // Устанавливаем шрифт Arial Rounded MT размером 35
         StackPane.setAlignment(descriptionText, Pos.TOP_LEFT); // Отменяем центрирование
-        descriptionText.setTranslateX(200); // Устанавливаем координату X
-        descriptionText.setTranslateY(400); // Устанавливаем координату Y
-        Color customColor = Color.rgb(215,125,49); // Создаем свой собственный цвет
+        descriptionText.setTranslateX(30); // Устанавливаем координату X
+        descriptionText.setTranslateY(270); // Устанавливаем координату Y
+        Color customColor = Color.rgb(215, 125, 49); // Создаем свой собственный цвет
         descriptionText.setFill(customColor); // Устанавливаем цвет текста на наш
         descriptionText.setStroke(Color.BLACK); // Устанавливаем чёрный контур
         descriptionText.setStrokeWidth(2.0); // Устанавливаем толщину обводки
         descriptionText.setStrokeType(StrokeType.OUTSIDE); // Устанавливаем тип обводки
         root.getChildren().add(descriptionText);
 
-        Scene scene = new Scene(root, 1600, 900); // Основное окно
+        Scene scene = new Scene(root, 900, 600); // Основное окно
 
         // Окно для кнопок
-        Rectangle rectangleManagement = new Rectangle(400,900,Color.WHITE);
+        Rectangle rectangleManagement = new Rectangle(300, 600, Color.WHITE);
         StackPane.setAlignment(rectangleManagement, Pos.TOP_LEFT); // Отменяем центрирование
-        rectangleManagement.setTranslateX(1200); // Устанавливаем координату X
+        rectangleManagement.setTranslateX(600); // Устанавливаем координату X
         rectangleManagement.setTranslateY(0); // Устанавливаем координату Y
         rectangleManagement.setFill(Color.GRAY);// Устанавливаем цвет заливки прямоугольника
 
-        rectangleManagement.setStroke(Color.BLACK);  // Установка цвета обводки
+        rectangleManagement.setStroke(Color.BLACK); // Установка цвета обводки
         rectangleManagement.setStrokeWidth(5); // Установка ширины обводки
         rectangleManagement.setStrokeType(javafx.scene.shape.StrokeType.INSIDE); // Установка типа обводки внутри
 
@@ -89,12 +99,12 @@ public class AntSimulation extends Application {
         FXMLstackPane.getChildren().add(buttonNode);
         root.getChildren().add(FXMLstackPane);
 
-        times = new Text("Time: 00:00:00"); // Текст для информации о времени
+        times = new Text("Таймер: 00:00:00"); // Текст для информации о времени
         times.setFont(Font.font("Arial Rounded MT", 35)); // устанавливаем шрифт Arial Rounded MT размером 20
         times.setFill(Color.BLACK); // устанавливаем цвет текста
         StackPane.setAlignment(times, Pos.TOP_LEFT);
-        times.setTranslateX(1300); // Устанавливаем координату X
-        times.setTranslateY(800); // Устанавливаем координату Y
+        times.setTranslateX(620); // Устанавливаем координату X
+        times.setTranslateY(540); // Устанавливаем координату Y
         root.getChildren().add(times);
 
         scene.setOnKeyPressed(event -> {
@@ -131,12 +141,15 @@ public class AntSimulation extends Application {
         });
 
         // Добавление иконки
-        primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm())); // Установка иконки
+        primaryStage.getIcons()
+                .add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm())); // Установка
+                                                                                                                 // иконки
 
         primaryStage.setTitle("Ant Simulation"); // Установка названия программы
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
     // Метод для запуска таймера обновления времени
     private void startTimer() {
         timer = new AnimationTimer() {
@@ -147,7 +160,7 @@ public class AntSimulation extends Application {
                 long hours = simulationTime / 3600;
                 long minutes = (simulationTime % 3600) / 60;
                 long seconds = simulationTime % 60;
-                times.setText(String.format("Time: %02d:%02d:%02d", hours, minutes, seconds));
+                times.setText(String.format("Таймер: %02d:%02d:%02d", hours, minutes, seconds));
             }
         };
         timer.start();
@@ -160,7 +173,7 @@ public class AntSimulation extends Application {
             // Сброс начального времени симуляции до исходного значения
             simulationStartTime = System.currentTimeMillis();
             // Сброс текста отображаемого времени
-            times.setText("Time: 00:00:00");
+            times.setText("Таймер: 00:00:00");
         }
     }
 
@@ -171,9 +184,10 @@ public class AntSimulation extends Application {
         habitat.startSimulation();
         startTimer(); // Запускаем таймер
     }
+
     public void stopSimulation() {
         startFlag = false;
-        //root.getChildren().remove(times);
+        // root.getChildren().remove(times);
         habitat.stopSimulation();
         stopTimer(); // Останавливаем таймер
     }
