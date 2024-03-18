@@ -27,10 +27,10 @@ public class Habitat {
     private Rectangle statisticsRectangle; // Rectangle для вывода статистики
     public boolean moreInfo;
     private boolean startFlag; // Флаг для проверки работы симуляции
-    private static final int N1 = 5; // Интервал для рабочих муравьев (в секундах)
-    private static final double P1 = 0.3; // Вероятность для рабочих муравьев
-    private static final int N2 = 3; // интервал для муравьев-воинов (в секундах)
-    private static final double P2 = 0.5; // вероятность для муравьев-воинов
+    public int N1; // Интервал для рабочих муравьев (в секундах)
+    public double P1; // Вероятность для рабочих муравьев
+    public int N2; // интервал для муравьев-воинов (в секундах)
+    public double P2; // вероятность для муравьев-воинов
 
     public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
@@ -50,6 +50,7 @@ public class Habitat {
         root.getChildren().remove(statisticsRectangle);
         root.getChildren().remove(statisticsLabel);
         simulationTimer.start();
+        System.out.println(P1 + "   " + P2);
     }
 
     public void stopSimulation() {
@@ -60,23 +61,33 @@ public class Habitat {
     }
 
     private AnimationTimer createSimulationTimer() {
-        long[] lastSpawnTimeWorker = { System.nanoTime() };
-        long[] lastSpawnTimeWarrior = { System.nanoTime() };
+        long startTime =  System.currentTimeMillis();
 
         return new AnimationTimer() {
             @Override
             public void handle(long now) {
-                long elapsedTimeWorker = (now - lastSpawnTimeWorker[0]) / 1_000_000_000;
-                long elapsedTimeWarrior = (now - lastSpawnTimeWarrior[0]) / 1_000_000_000;
+                long elapsedTimeWorker = (now - startTime) / 1000;
+                long elapsedTimeWarrior = (now - startTime) / 1000;
 
-                if (elapsedTimeWorker >= N1 && random.nextDouble() <= P1) {
-                    spawnAnt(new WorkerAnt());
-                    lastSpawnTimeWorker[0] = now;
+
+                //System.out.println(pp1 + "   " + pp2);
+                //System.out.println(elapsedTimeWorker + "   " + elapsedTimeWarrior);
+                //if(pp1 <= 0.1) {System.out.println(pp1 + "  ==============================================================");}
+
+
+                if (elapsedTimeWorker % N1 == 0) {
+                    double pp1 = random.nextDouble();
+                    if(pp1 <= P1) {
+                        System.out.println(pp1 + " " + elapsedTimeWorker% N1 + " " + (now - startTime/ 1000));
+                        spawnAnt(new WorkerAnt());
+                    }
+
                 }
 
-                if (elapsedTimeWarrior >= N2 && random.nextDouble() <= P2) {
-                    spawnAnt(new WarriorAnt());
-                    lastSpawnTimeWarrior[0] = now;
+                if (elapsedTimeWorker % N2 == 0) {
+                    if(random.nextDouble() <= P2) {
+                        spawnAnt(new WarriorAnt());
+                    }
                 }
             }
         };

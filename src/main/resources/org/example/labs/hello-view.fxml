@@ -5,13 +5,19 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.Node?>
 <?import javafx.scene.layout.Pane?>
-
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.control.ComboBox?>
 <Pane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.labs.buttons.button">
     <children>
         <Button fx:id="btnStart" text="Click!" onAction="#click" layoutX="1250" layoutY="100" prefWidth="150" prefHeight="75"/>
         <Button fx:id="btnStop" text="Click!" onAction="#click" layoutX="1410" layoutY="100" prefWidth="150" prefHeight="75"/>
         <CheckBox fx:id="cbShowInfo" text="Показать информацию" onAction="#check" layoutX="1410" layoutY="200"/>
+        <TextField fx:id="N1" layoutX="1250" layoutY="500" prefWidth="35" />
+        <TextField fx:id="N2" layoutX="1250" layoutY="650" prefWidth="35" />
+        <ComboBox fx:id="P1" layoutX="1250" layoutY="700" prefWidth="75.0"/>
+        <ComboBox fx:id="P2" layoutX="1250" layoutY="760" prefWidth="75.0"/>
     </children>
 </Pane>
 
