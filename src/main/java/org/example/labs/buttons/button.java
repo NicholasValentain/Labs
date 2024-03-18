@@ -11,8 +11,6 @@ import javafx.scene.shape.Rectangle;
 import org.example.labs.model.Habitat; // Импортируем класс Habitat
 import org.example.labs.controller.AntSimulation;
 
-import java.util.ArrayList;
-import java.util.Random;
 
 
 public class button {
@@ -62,18 +60,22 @@ public class button {
                     N2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
+                    cbShowInfo.setDisable(true);
                     antSimulation.startSimulation();
                 }
                 break;
             case "btnStop":
                 if (habitat != null && antSimulation.startFlag) {
-                    btnStart.setDisable(false);
-                    btnStop.setDisable(true);
+                    if(cbShowInfo.isSelected()) {
+                        btnStart.setDisable(true);
+                        btnStop.setDisable(true);
+                    }
 
                     N1.setDisable(false);
                     N2.setDisable(false);
                     P1.setDisable(false);
                     P2.setDisable(false);
+                    cbShowInfo.setDisable(false);
                     antSimulation.stopSimulation();
                 }
                 break;
@@ -84,10 +86,12 @@ public class button {
         if (ShowTime.isSelected() && !antSimulation.timerVisible) {
             antSimulation.timerVisible = true;
             antSimulation.root.getChildren().add(antSimulation.times);
+            HideTime.setSelected(false);
         }
         else if (HideTime.isSelected() && antSimulation.timerVisible) {
             antSimulation.timerVisible = false;
             antSimulation.root.getChildren().remove(antSimulation.times);
+            ShowTime.setSelected(false);
         }
     }
 
@@ -120,5 +124,85 @@ public class button {
         }
         return true;
     }
+    @FXML
+    private void handleMenuAction(ActionEvent event) {
+        MenuItem menuItem = (MenuItem) event.getSource();
+        switch (menuItem.getText()) {
+            case "Выход":
+                System.exit(0);
+                break;
+            case "Старт (B)":
+                if (habitat != null && !antSimulation.startFlag) {
+                    btnStart.setDisable(true);
+                    btnStop.setDisable(false);
 
+                    N1.setDisable(true);
+                    N2.setDisable(true);
+                    P1.setDisable(true);
+                    P2.setDisable(true);
+                    cbShowInfo.setDisable(true);
+                    checkError();
+                    antSimulation.startSimulation();
+                }
+                break;
+            case "Стоп (E)":
+                if (habitat != null && antSimulation.startFlag) {
+                    if(cbShowInfo.isSelected()) {
+                        btnStart.setDisable(true);
+                        btnStop.setDisable(true);
+                    }
+
+                    N1.setDisable(false);
+                    N2.setDisable(false);
+                    P1.setDisable(false);
+                    P2.setDisable(false);
+                    cbShowInfo.setDisable(false);
+                    antSimulation.stopSimulation();
+                }
+                break;
+        }
+    }
+
+    @FXML
+    private void clickTime() {
+        // Изменяем состояние видимости таймера и обновляем чекбоксы
+        if (antSimulation.timerVisible) {
+            antSimulation.root.getChildren().remove(antSimulation.times);
+            antSimulation.timerVisible = false;
+            HideTime.setSelected(true);
+            ShowTime.setSelected(false);
+        } else {
+            antSimulation.root.getChildren().add(antSimulation.times);
+            antSimulation.timerVisible = true;
+            ShowTime.setSelected(true);
+            HideTime.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void handleTimerMenuAction(ActionEvent event) {
+        MenuItem menuItem = (MenuItem) event.getSource();
+        if ("Показать/Скрыть (T)".equals(menuItem.getText())) {
+            if (antSimulation != null) {
+                // Изменяем состояние видимости таймера и обновляем чекбоксы
+                antSimulation.setTimerVisible(!antSimulation.isTimerVisible());
+                ShowTime.setSelected(antSimulation.isTimerVisible());
+                HideTime.setSelected(!antSimulation.isTimerVisible());
+            }
+        }
+    }
+
+    @FXML
+    private void clickInf() {
+        if(!cbShowInfo.isDisable()) {
+            if(!cbShowInfo.isSelected()) {
+                cbShowInfo.setSelected(true);
+                habitat.moreInfo = cbShowInfo.isSelected();
+            }
+            else {
+                cbShowInfo.setSelected(false);
+                habitat.moreInfo = cbShowInfo.isSelected();
+            }
+        }
+    }
 }

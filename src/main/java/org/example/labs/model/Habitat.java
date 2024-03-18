@@ -26,15 +26,21 @@ public class Habitat {
     private Random random;
     private AnimationTimer simulationTimer;
     private List<Ant> ants; // Добавим объявление переменной ants
-    private long simulationStartTime; // Время начала симуляции
+    private long simulationStartTime = 0; // Время начала симуляции
     private Label statisticsLabel; // Label для вывода статистики
     private Rectangle statisticsRectangle; // Rectangle для вывода статистики
     public boolean moreInfo;
+    public volatile boolean paused = false;
+    public  volatile  boolean isExit = false;
     private boolean startFlag; // Флаг для проверки работы симуляции
     public int N1; // Интервал для рабочих муравьев (в секундах)
     public double P1; // Вероятность для рабочих муравьев
     public int N2; // интервал для муравьев-воинов (в секундах)
     public double P2; // вероятность для муравьев-воинов
+
+    private long waitTime = 0;
+    private long simulationTimes = 0;
+    private long currentTime = 0;
 
     public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
@@ -47,22 +53,29 @@ public class Habitat {
     }
 
     public void startSimulation() {
+        isExit = false;
+        paused = false;
+        waitTime = 0;
         simulationStartTime = System.currentTimeMillis();
         AntList.getChildren().clear();
         ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
-        root.getChildren().remove(statisticsRectangle);
-        root.getChildren().remove(statisticsLabel);
+//        root.getChildren().remove(statisticsRectangle);
+//        root.getChildren().remove(statisticsLabel);
         simulationTimer.start();
-        System.out.println(P1 + "   " + P2);
     }
 
     public void stopSimulation() {
-        simulationTimer.stop();
-        //root.getChildren().clear();
-        AntList.getChildren().clear();
+        //AntList.getChildren().clear();
+        paused = true;
         if(moreInfo) updateStatistics();
+        else {
+            simulationTimer.stop();
+            AntList.getChildren().clear();
+            isExit = true;
+        }
     }
+
 
     private AnimationTimer createSimulationTimer() {
         long startTime = System.nanoTime();
@@ -72,23 +85,32 @@ public class Habitat {
         return new AnimationTimer() {
             @Override
             public void handle(long now) {
-                long elapsedTime = (now - startTime) / 1_000_000_000;
-
-                // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
-                if (elapsedTime - lastWorkerTime[0] >= N1) {
-                    double pp1 = random.nextDouble();
-                    if (pp1 <= P1) {
-                        spawnAnt(new WorkerAnt());
-                    }
-                    lastWorkerTime[0] = elapsedTime;
+                if (paused) {
+                    currentTime = ((System.currentTimeMillis() - simulationStartTime) / 1000);
+                    waitTime = (currentTime - simulationTimes);
+                    //System.out.println(waitTime + " " + currentTime + " " + simulationTimes);
+                    //return;
                 }
+                else {
+                    currentTime = System.currentTimeMillis();
+                    simulationTimes = ((currentTime - simulationStartTime) / 1000) - waitTime;
+                    long elapsedTime = (now - startTime) / 1_000_000_000;
 
-                // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
-                if (elapsedTime - lastWarriorTime[0] >= N2) {
-                    if (random.nextDouble() <= P2) {
-                        spawnAnt(new WarriorAnt());
+                    // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
+                    if (elapsedTime - lastWorkerTime[0] >= N1) {
+                        if (random.nextDouble() <= P1) {
+                            spawnAnt(new WorkerAnt());
+                        }
+                        lastWorkerTime[0] = elapsedTime;
                     }
-                    lastWarriorTime[0] = elapsedTime;
+
+                    // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
+                    if (elapsedTime - lastWarriorTime[0] >= N2) {
+                        if (random.nextDouble() <= P2) {
+                            spawnAnt(new WarriorAnt());
+                        }
+                        lastWarriorTime[0] = elapsedTime;
+                    }
                 }
             }
         };
@@ -99,14 +121,12 @@ public class Habitat {
         StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
         ant.getImageView().setTranslateX(random.nextDouble() * 1150);
         ant.getImageView().setTranslateY(random.nextDouble() * 850);
-        //root.getChildren().add(ant.getImageView());
         AntList.getChildren().add(ant.getImageView());
         ants.add(ant);
     }
 
     private void updateStatistics() {
-        long simulationEndTime = System.currentTimeMillis();
-        long simulationTime = (simulationEndTime - simulationStartTime) / 1000;
+        long simulationTime = simulationTimes;
 
         int workerAntsCount = 0;
         int warriorAntsCount = 0;
@@ -138,7 +158,15 @@ public class Habitat {
         textArea.setEditable(false);
         textArea.setWrapText(true);
         alert.getDialogPane().setContent(textArea);
-        alert.showAndWait();
-
+        //alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            simulationTimer.stop();
+            isExit = true;
+            AntList.getChildren().clear();
+        }
+        else {
+            paused = false;
+        }
     }
 }
