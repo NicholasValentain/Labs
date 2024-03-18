@@ -43,8 +43,8 @@
     <center>
         <Pane>
             <children>
-                <Button fx:id="btnStart" text="СТАРТ (B)" onAction="#click" layoutX="1250" layoutY="100" prefWidth="150" prefHeight="75"/>
-                <Button fx:id="btnStop" text="СТОП (E)" onAction="#click" layoutX="1410" layoutY="100" prefWidth="150" prefHeight="75"/>
+                <Button fx:id="btnStart" text="СТАРТ (B)" style="-fx-font-size: 26px;" onAction="#click" layoutX="1250" layoutY="100" prefWidth="150" prefHeight="75"/>
+                <Button fx:id="btnStop" text="СТОП (E)" style="-fx-font-size: 26px;" onAction="#click" layoutX="1410" layoutY="100" prefWidth="150" prefHeight="75"/>
                 <RadioButton fx:id="ShowTime" text="Показать время (T)" onAction="#clickTimeSwitch" layoutX="1250" layoutY="200" prefHeight="30" prefWidth="200"></RadioButton>
                 <RadioButton fx:id="HideTime" text="Скрыть время (T)" onAction="#clickTimeSwitch" layoutX="1250" layoutY="230" prefHeight="30" prefWidth="200"></RadioButton>
                 <CheckBox fx:id="cbShowInfo" text="Показать информацию" onAction="#check" layoutX="1250" layoutY="300"/>
