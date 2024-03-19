@@ -1,4 +1,4 @@
-package org.example.labs.buttons;
+package org.example.labs.controllres;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -6,14 +6,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import org.example.labs.model.Habitat; // Импортируем класс Habitat
-import org.example.labs.controller.AntSimulation;
+import org.example.labs.main.AntSimulation;
 
 
 
-public class button {
+public class controller {
     @FXML
     public Button btnStart, btnStop;
     @FXML
@@ -38,6 +38,7 @@ public class button {
         N1.setText("1");
         N2.setText("1");
         ShowTime.setSelected(true);
+        btnStop.setDisable(true);
         // Установка списка элементов в ComboBox
         P1.setItems(options);
         P2.setItems(options);
@@ -99,15 +100,16 @@ public class button {
 
     @FXML
     public boolean checkError() {
+        int n1 = 1;
+        int n2 = 1;
         try {
-            if(Integer.parseInt(N1.getText()) < 1 || Integer.parseInt(N2.getText()) < 1) {
-                if (Integer.parseInt(N1.getText()) < 1) N1.setText("1");
-                if (Integer.parseInt(N2.getText()) < 1) N2.setText("1");
-                throw new NumberFormatException("Число меньше 1");
-            }
+            n1 = Integer.parseInt(N1.getText());
+            n2 = Integer.parseInt(N2.getText());
 
-            habitat.N1 = Integer.parseInt(N1.getText());
-            habitat.N2 = Integer.parseInt(N2.getText());
+            if (n1 < 1 || n2 < 1) throw new NumberFormatException("Число меньше 1");
+
+            habitat.N1 = n1;
+            habitat.N2 = n2;
 
             habitat.P1 = Double.parseDouble((String) P1.getValue()) / 100;
             habitat.P2 = Double.parseDouble((String) P2.getValue()) / 100;
@@ -118,6 +120,15 @@ public class button {
             alert.setTitle("Ошибка!");
             alert.setHeaderText("Некорректный период рождения");
             alert.setContentText("Требуется целое положительное число!");
+
+            // Проверяем, на некорректный ввод
+            if (!N1.getText().matches("\\d+") || n1 < 1) N1.setText("1");
+            if (!N2.getText().matches("\\d+") || n2 < 1) N2.setText("1");
+
+            // Get the Stage.
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            // Add a custom icon.
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/error.png")));
             alert.showAndWait();
             return false;
         }

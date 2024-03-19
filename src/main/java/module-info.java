@@ -5,8 +5,8 @@ module org.example.labs {
 
     opens org.example.labs to javafx.fxml;
     exports org.example.labs.model;
-    exports org.example.labs.controller;
-    exports org.example.labs.buttons;
-    opens org.example.labs.controller to javafx.fxml;
-    opens org.example.labs.buttons to javafx.fxml;
+    exports org.example.labs.main;
+    exports org.example.labs.controllres;
+    opens org.example.labs.main to javafx.fxml;
+    opens org.example.labs.controllres to javafx.fxml;
 }

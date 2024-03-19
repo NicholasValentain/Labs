@@ -17,6 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
+import javafx.stage.Stage;
+
 import java.util.Optional;
 import java.util.Random;
 
@@ -150,6 +152,11 @@ public class Habitat {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Статистика");
         alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
+
+        // Get the Stage.
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        // Add a custom icon.
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png")));
 
         String simulationTimeString;
         long hours = simulationTime / 3600;

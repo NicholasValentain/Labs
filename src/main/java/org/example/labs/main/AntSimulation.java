@@ -1,4 +1,4 @@
-package org.example.labs.controller;
+package org.example.labs.main;
 
 
 import javafx.animation.AnimationTimer;
@@ -16,7 +16,6 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.example.labs.buttons.button;
 import org.example.labs.model.Habitat;
 
 import java.io.IOException;
@@ -29,7 +28,7 @@ public class AntSimulation extends Application {
     private StackPane AntList = new StackPane();
     public StackPane root;
     private Habitat habitat;
-    private button controller;
+    private org.example.labs.controllres.controller controller;
     private Text descriptionText;
     private AnimationTimer timer;
     private long waitTime = 0;
@@ -91,7 +90,7 @@ public class AntSimulation extends Application {
         root.getChildren().add(rectangleManagement);// Добавляем прямоугольник на сцену
 
         StackPane FXMLstackPane = new StackPane();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/labs/hello-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/labs/control.fxml"));
         Node buttonNode = loader.load();
         controller = loader.getController();
         controller.setHabitat(habitat, this);
