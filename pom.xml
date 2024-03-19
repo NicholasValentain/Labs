@@ -60,7 +60,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.labs/org.example.labs.controller/org.example.labs.controller.AntSimulation</mainClass>
+                            <mainClass>org.example.labs/org.example.labs.controller/org.example.labs.main.AntSimulation</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
