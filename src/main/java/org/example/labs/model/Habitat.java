@@ -1,8 +1,6 @@
 package org.example.labs.model;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
 
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
@@ -12,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import java.util.ArrayList; // Добавим импорт для ArrayList
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -20,6 +19,9 @@ import javafx.scene.text.Font;
 
 import javafx.stage.Stage;
 
+import java.util.Optional;
+import java.util.Random;
+
 public class Habitat {
     private static Habitat instance; // Статическое поле для хранения единственного экземпляра
     private StackPane root;
@@ -27,15 +29,6 @@ public class Habitat {
     private Random random;
     private AnimationTimer simulationTimer;
     private List<Ant> ants; // Добавим объявление переменной ants
-
-
-
-    private HashSet<Integer> identifiers;
-    public TreeMap<Integer, Long> spawnTimes;
-    int ID;
-
-
-
     private long simulationStartTime = 0; // Время начала симуляции
     private Label statisticsLabel; // Label для вывода статистики
     private Rectangle statisticsRectangle; // Rectangle для вывода статистики
@@ -47,26 +40,17 @@ public class Habitat {
     public double P1; // Вероятность для рабочих муравьев
     public int N2; // интервал для муравьев-воинов (в секундах)
     public double P2; // вероятность для муравьев-воинов
-    public int L1;
-    public int L2;
 
     private long waitTime = 0;
     private long simulationTimes = 0;
     private long currentTime = 0;
 
-    long lastWorkerTime;
-    long lastWarriorTime;
-
     public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
         this.AntList = AntList;
-
-        identifiers = new HashSet<>();
-        spawnTimes = new TreeMap<>();
-
         this.random = new Random();
         this.simulationTimer = createSimulationTimer();
-        this.ants = new Vector<>(); // Инициализируем переменную ants
+        this.ants = new ArrayList<>(); // Инициализируем переменную ants
         this.statisticsLabel = new Label();
         this.statisticsRectangle = new Rectangle();
     }
@@ -82,42 +66,31 @@ public class Habitat {
         isExit = false;
         paused = false;
         waitTime = 0;
-
-
-        ID = 0;
-
-        lastWorkerTime = 0;
-        lastWarriorTime = 0;
-
-
         simulationStartTime = System.currentTimeMillis();
         AntList.getChildren().clear();
         ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
+//        root.getChildren().remove(statisticsRectangle);
+//        root.getChildren().remove(statisticsLabel);
         simulationTimer.start();
     }
 
     public void stopSimulation() {
         //AntList.getChildren().clear();
         paused = true;
-
         if(moreInfo) updateStatistics();
         else {
             simulationTimer.stop();
             AntList.getChildren().clear();
-
-
-            identifiers.clear();
-            spawnTimes.clear();
-
-
             isExit = true;
         }
     }
 
+
     private AnimationTimer createSimulationTimer() {
         long startTime = System.nanoTime();
-
+        final long[] lastWorkerTime = {0};
+        final long[] lastWarriorTime = {0};
 
         return new AnimationTimer() {
             @Override
@@ -130,47 +103,36 @@ public class Habitat {
                 }
                 else {
                     currentTime = System.currentTimeMillis();
-                    //time = currentTime - simulationStartTime;
-
                     simulationTimes = ((currentTime - simulationStartTime) / 1000) - waitTime;
-
-                    //long elapsedTime = (now / 1_000_000_000) - (simulationStartTime / 1000);
-                    //System.out.println("============" + simulationTimes);
-
-                    clearDeadFish(simulationTimes);
+                    long elapsedTime = (now - startTime) / 1_000_000_000;
 
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
-                    if (simulationTimes - lastWorkerTime >= N1) {
+                    if (elapsedTime - lastWorkerTime[0] >= N1) {
                         if (random.nextDouble() <= P1) {
-                            spawnAnt(new WorkerAnt(simulationTimes, L1), simulationTimes);
+                            spawnAnt(new WorkerAnt());
                         }
-                        lastWorkerTime = simulationTimes;
+                        lastWorkerTime[0] = elapsedTime;
                     }
 
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
-                    if (simulationTimes - lastWarriorTime >= N2) {
+                    if (elapsedTime - lastWarriorTime[0] >= N2) {
                         if (random.nextDouble() <= P2) {
-                            spawnAnt(new WarriorAnt(simulationTimes, L2), simulationTimes);
+                            spawnAnt(new WarriorAnt());
                         }
-                        lastWarriorTime = simulationTimes;
+                        lastWarriorTime[0] = elapsedTime;
                     }
                 }
             }
         };
     }
 
-    private void spawnAnt(Ant ant, long currentTime) {
+    private void spawnAnt(Ant ant) {
         // Отменяем центрирование только для добавленных муравьев
         StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
         ant.getImageView().setTranslateX(random.nextDouble() * 1150);
         ant.getImageView().setTranslateY(random.nextDouble() * 850);
         AntList.getChildren().add(ant.getImageView());
         ants.add(ant);
-
-
-        identifiers.add(ID);
-        spawnTimes.put(ID, currentTime);
-        ID++;
     }
 
     private void updateStatistics() {
@@ -190,7 +152,6 @@ public class Habitat {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Статистика");
         alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
-
 
         // Get the Stage.
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
@@ -218,44 +179,9 @@ public class Habitat {
             simulationTimer.stop();
             isExit = true;
             AntList.getChildren().clear();
-
-
-            identifiers.clear();
-            spawnTimes.clear();
-            ID = 0;
-
         }
         else {
             paused = false;
         }
     }
-
-    private void clearDeadFish(long currentTime) {
-        List<AtomicReference<Ant>> foundedFishList = new ArrayList<>();
-        AtomicReference<Ant> foundedFish = new AtomicReference<>(); // Временная переменная для объекта
-        ants.forEach(tmp -> { // Перебор массива
-            if (currentTime - tmp.getBirthTime() == tmp.getLifeTime()) { // Проверка на смэрть  не >=, а ==
-
-                AtomicInteger foundedId = new AtomicInteger(); // Временная переменная для ID
-                spawnTimes.forEach((id, birthTime) -> {
-                    if (tmp.getBirthTime() == birthTime) { // Находим объект с таким же временем в treeMap
-                        foundedId.set(id); // Берём ID этого элемента
-                        //System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime()+ " " + id);
-                    }
-                });
-                identifiers.remove(foundedId.get()); // Удаляем его из hashSet
-                spawnTimes.remove(foundedId.get()); // Удаляем его из treeMap
-                AntList.getChildren().remove(tmp.getImageView()); // Удаляем из Pane
-                foundedFish.set(tmp); // Берём этот элемент и копируем в временную переменную
-                foundedFishList.add(foundedFish);
-                //
-            }
-        });
-        for (AtomicReference<Ant> atomicRef : foundedFishList) {
-            ants.remove(atomicRef.get()); // Удаляем из листа
-        }
-
-    }
-
-
 }
