@@ -6,8 +6,8 @@ class WarriorAnt extends Ant {
     private static final double MOVEMENT_SPEED = 7.0;
     private Random random;
 
-    public WarriorAnt() {
-        super("/org/example/labs/AntGIF/ant2.gif");
+    public WarriorAnt(long currentTime) {
+        super("/org/example/labs/AntGIF/ant2.gif", currentTime);
         this.random = new Random();
     }
 
