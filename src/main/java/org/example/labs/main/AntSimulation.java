@@ -153,8 +153,7 @@ public class AntSimulation extends Application {
         });
 
         // Добавление иконки
-        primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm())); // Установка иконки
-
+        primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm()));
         primaryStage.setTitle("Ant Simulation"); // Установка названия программы
         primaryStage.setScene(scene);
         primaryStage.show();

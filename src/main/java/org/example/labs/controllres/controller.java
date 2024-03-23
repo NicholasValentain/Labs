@@ -86,12 +86,12 @@ public class controller {
         if (ShowTime.isSelected() && !antSimulation.timerVisible) {
             antSimulation.timerVisible = true;
             antSimulation.root.getChildren().add(antSimulation.times);
-            HideTime.setSelected(false);
+            //HideTime.setSelected(false);
         }
         else if (HideTime.isSelected() && antSimulation.timerVisible) {
             antSimulation.timerVisible = false;
             antSimulation.root.getChildren().remove(antSimulation.times);
-            ShowTime.setSelected(false);
+            //ShowTime.setSelected(false);
         }
     }
 
