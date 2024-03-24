@@ -52,6 +52,9 @@ public class Habitat {
     private long simulationTimes = 0;
     private long currentTime = 0;
 
+    long lastWorkerTime;
+    long lastWarriorTime;
+
     public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
         this.AntList = AntList;
@@ -81,6 +84,9 @@ public class Habitat {
 
         ID = 0;
 
+        lastWorkerTime = 0;
+        lastWarriorTime = 0;
+
 
         simulationStartTime = System.currentTimeMillis();
         AntList.getChildren().clear();
@@ -107,12 +113,9 @@ public class Habitat {
         }
     }
 
-    //long time;
     private AnimationTimer createSimulationTimer() {
         long startTime = System.nanoTime();
 
-        final long[] lastWorkerTime = {0};
-        final long[] lastWarriorTime = {0};
 
         return new AnimationTimer() {
             @Override
@@ -135,19 +138,19 @@ public class Habitat {
                     clearDeadFish(simulationTimes);
 
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
-                    if (simulationTimes - lastWorkerTime[0] >= N1) {
+                    if (simulationTimes - lastWorkerTime >= N1) {
                         if (random.nextDouble() <= P1) {
                             spawnAnt(new WorkerAnt(simulationTimes), simulationTimes);
                         }
-                        lastWorkerTime[0] = simulationTimes;
+                        lastWorkerTime = simulationTimes;
                     }
 
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
-                    if (simulationTimes - lastWarriorTime[0] >= N2) {
+                    if (simulationTimes - lastWarriorTime >= N2) {
                         if (random.nextDouble() <= P2) {
                             spawnAnt(new WarriorAnt(simulationTimes), simulationTimes);
                         }
-                        lastWarriorTime[0] = simulationTimes;
+                        lastWarriorTime = simulationTimes;
                     }
                 }
             }
@@ -230,6 +233,7 @@ public class Habitat {
 
             identifiers.clear();
             spawnTimes.clear();
+            ID = 0;
 
         }
         else {
