@@ -47,6 +47,8 @@ public class Habitat {
     public double P1; // Вероятность для рабочих муравьев
     public int N2; // интервал для муравьев-воинов (в секундах)
     public double P2; // вероятность для муравьев-воинов
+    public int L1;
+    public int L2;
 
     private long waitTime = 0;
     private long simulationTimes = 0;
@@ -140,7 +142,7 @@ public class Habitat {
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
                     if (simulationTimes - lastWorkerTime >= N1) {
                         if (random.nextDouble() <= P1) {
-                            spawnAnt(new WorkerAnt(simulationTimes), simulationTimes);
+                            spawnAnt(new WorkerAnt(simulationTimes, L1), simulationTimes);
                         }
                         lastWorkerTime = simulationTimes;
                     }
@@ -148,7 +150,7 @@ public class Habitat {
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
                     if (simulationTimes - lastWarriorTime >= N2) {
                         if (random.nextDouble() <= P2) {
-                            spawnAnt(new WarriorAnt(simulationTimes), simulationTimes);
+                            spawnAnt(new WarriorAnt(simulationTimes,L2), simulationTimes);
                         }
                         lastWarriorTime = simulationTimes;
                     }
