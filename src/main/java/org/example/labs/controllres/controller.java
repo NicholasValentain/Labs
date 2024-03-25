@@ -21,7 +21,7 @@ public class controller {
     @FXML
     public CheckBox cbShowInfo;
     @FXML
-    public TextField N1, N2;
+    public TextField N1, N2, L1, L2;
     @FXML
     public ComboBox P1, P2;
     private Habitat habitat; // Добавляем поле для хранения ссылки на habitat
@@ -37,12 +37,14 @@ public class controller {
         this.antSimulation = antSimulation;
         N1.setText("1");
         N2.setText("1");
+        L1.setText("1");
+        L2.setText("1");
         ShowTime.setSelected(true);
         btnStop.setDisable(true);
         // Установка списка элементов в ComboBox
         P1.setItems(options);
         P2.setItems(options);
-        P1.setValue("10");
+        P1.setValue("100");
         P2.setValue("100");
 
     }
@@ -58,6 +60,8 @@ public class controller {
 
                     N1.setDisable(true);
                     N2.setDisable(true);
+                    L1.setDisable(true);
+                    L2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
                     cbShowInfo.setDisable(true);
@@ -73,6 +77,8 @@ public class controller {
 
                     N1.setDisable(false);
                     N2.setDisable(false);
+                    L1.setDisable(false);
+                    L2.setDisable(false);
                     P1.setDisable(false);
                     P2.setDisable(false);
                     cbShowInfo.setDisable(false);
@@ -102,14 +108,21 @@ public class controller {
     public boolean checkError() {
         int n1 = 1;
         int n2 = 1;
+        int l1 = 1;
+        int l2 = 1;
         try {
             n1 = Integer.parseInt(N1.getText());
             n2 = Integer.parseInt(N2.getText());
+            l1 = Integer.parseInt(N1.getText());
+            l2 = Integer.parseInt(N2.getText());
 
-            if (n1 < 1 || n2 < 1) throw new NumberFormatException("Число меньше 1");
+            if (n1 < 1 || n2 < 1 || l1 < 1 || l2 < 1) throw new NumberFormatException("Число меньше 1");
+
 
             habitat.N1 = n1;
             habitat.N2 = n2;
+            habitat.L1 = l1;
+            habitat.L2 = l2;
 
             habitat.P1 = Double.parseDouble((String) P1.getValue()) / 100;
             habitat.P2 = Double.parseDouble((String) P2.getValue()) / 100;
@@ -124,6 +137,8 @@ public class controller {
             // Проверяем, на некорректный ввод
             if (!N1.getText().matches("\\d+") || n1 < 1) N1.setText("1");
             if (!N2.getText().matches("\\d+") || n2 < 1) N2.setText("1");
+            if (!L1.getText().matches("\\d+") || l1 < 1) L1.setText("1");
+            if (!L2.getText().matches("\\d+") || l2 < 1) L2.setText("1");
 
             // Get the Stage.
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
@@ -148,6 +163,8 @@ public class controller {
 
                     N1.setDisable(true);
                     N2.setDisable(true);
+                    L1.setDisable(true);
+                    L2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
                     cbShowInfo.setDisable(true);
@@ -164,6 +181,8 @@ public class controller {
 
                     N1.setDisable(false);
                     N2.setDisable(false);
+                    L1.setDisable(false);
+                    L2.setDisable(false);
                     P1.setDisable(false);
                     P2.setDisable(false);
                     cbShowInfo.setDisable(false);
