@@ -31,7 +31,7 @@ public class Habitat {
 
 
     private HashSet<Integer> identifiers;
-    private TreeMap<Integer, Long> spawnTimes;
+    public TreeMap<Integer, Long> spawnTimes;
     int ID;
 
 
@@ -135,7 +135,7 @@ public class Habitat {
                     simulationTimes = ((currentTime - simulationStartTime) / 1000) - waitTime;
 
                     //long elapsedTime = (now / 1_000_000_000) - (simulationStartTime / 1000);
-                    System.out.println("============" + simulationTimes);
+                    //System.out.println("============" + simulationTimes);
 
                     clearDeadFish(simulationTimes);
 
@@ -192,19 +192,6 @@ public class Habitat {
         alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
 
 
-        for(int state : identifiers){
-
-            System.out.println(state);
-        }
-        for(Map.Entry<Integer, Long> item : spawnTimes.entrySet()){
-
-            System.out.printf("Key: %d  Value: %s \n", item.getKey(), item.getValue());
-        }
-
-
-
-
-
         // Get the Stage.
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         // Add a custom icon.
@@ -253,7 +240,7 @@ public class Habitat {
                 spawnTimes.forEach((id, birthTime) -> {
                     if (tmp.getBirthTime() == birthTime) { // Находим объект с таким же временем в treeMap
                         foundedId.set(id); // Берём ID этого элемента
-                        System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime()+ " " + id);
+                        //System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime()+ " " + id);
                     }
                 });
                 identifiers.remove(foundedId.get()); // Удаляем его из hashSet
