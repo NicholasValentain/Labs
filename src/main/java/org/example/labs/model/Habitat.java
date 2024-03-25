@@ -150,7 +150,7 @@ public class Habitat {
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
                     if (simulationTimes - lastWarriorTime >= N2) {
                         if (random.nextDouble() <= P2) {
-                            spawnAnt(new WarriorAnt(simulationTimes,L2), simulationTimes);
+                            spawnAnt(new WarriorAnt(simulationTimes, L2), simulationTimes);
                         }
                         lastWarriorTime = simulationTimes;
                     }

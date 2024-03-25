@@ -44,7 +44,7 @@ public class controller {
         // Установка списка элементов в ComboBox
         P1.setItems(options);
         P2.setItems(options);
-        P1.setValue("10");
+        P1.setValue("100");
         P2.setValue("100");
 
     }
@@ -60,6 +60,8 @@ public class controller {
 
                     N1.setDisable(true);
                     N2.setDisable(true);
+                    L1.setDisable(true);
+                    L2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
                     cbShowInfo.setDisable(true);
@@ -75,6 +77,8 @@ public class controller {
 
                     N1.setDisable(false);
                     N2.setDisable(false);
+                    L1.setDisable(false);
+                    L2.setDisable(false);
                     P1.setDisable(false);
                     P2.setDisable(false);
                     cbShowInfo.setDisable(false);
@@ -88,12 +92,12 @@ public class controller {
         if (ShowTime.isSelected() && !antSimulation.timerVisible) {
             antSimulation.timerVisible = true;
             antSimulation.root.getChildren().add(antSimulation.times);
-            HideTime.setSelected(false);
+            //HideTime.setSelected(false);
         }
         else if (HideTime.isSelected() && antSimulation.timerVisible) {
             antSimulation.timerVisible = false;
             antSimulation.root.getChildren().remove(antSimulation.times);
-            ShowTime.setSelected(false);
+            //ShowTime.setSelected(false);
         }
     }
 
@@ -106,14 +110,14 @@ public class controller {
         int n2 = 1;
         int l1 = 1;
         int l2 = 1;
-
         try {
             n1 = Integer.parseInt(N1.getText());
             n2 = Integer.parseInt(N2.getText());
-            l1 = Integer.parseInt(L1.getText());
-            l2 = Integer.parseInt(L2.getText());
+            l1 = Integer.parseInt(N1.getText());
+            l2 = Integer.parseInt(N2.getText());
 
             if (n1 < 1 || n2 < 1 || l1 < 1 || l2 < 1) throw new NumberFormatException("Число меньше 1");
+
 
             habitat.N1 = n1;
             habitat.N2 = n2;
@@ -159,6 +163,8 @@ public class controller {
 
                     N1.setDisable(true);
                     N2.setDisable(true);
+                    L1.setDisable(true);
+                    L2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
                     cbShowInfo.setDisable(true);
@@ -175,6 +181,8 @@ public class controller {
 
                     N1.setDisable(false);
                     N2.setDisable(false);
+                    L1.setDisable(false);
+                    L2.setDisable(false);
                     P1.setDisable(false);
                     P2.setDisable(false);
                     cbShowInfo.setDisable(false);
