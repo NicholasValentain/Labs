@@ -4,18 +4,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.labs.model.Habitat; // Импортируем класс Habitat
 import org.example.labs.main.AntSimulation;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -23,7 +19,7 @@ import java.util.TreeMap;
 
 public class controller {
     @FXML
-    public Button btnStart, btnStop, btnList;
+    public Button btnStart, btnStop;
     @FXML
     public RadioButton ShowTime, HideTime;
     @FXML
@@ -32,10 +28,8 @@ public class controller {
     public TextField N1, N2, L1, L2;
     @FXML
     public ComboBox P1, P2;
-
-    //@FXML
-    //public TableView<Map.Entry<Integer, Long>> tableView;
-
+    @FXML
+    public TableView<Map.Entry<Integer, Long>> tableView;
     public TreeMap<Integer, Long> treeMap;
     private Habitat habitat; // Добавляем поле для хранения ссылки на habitat
     private AntSimulation antSimulation;
@@ -61,7 +55,7 @@ public class controller {
         P2.setValue("100");
 
 
-        //tableView.setVisible(false);
+        tableView.setVisible(false);
     }
 
     @FXML
@@ -249,24 +243,74 @@ public class controller {
             }
         }
     }
-    @FXML
-    private void openDialog() {
-        try {
-            treeMap = habitat.spawnTimes;
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/labs/dialogList.fxml"));
-            Parent root = fxmlLoader.load();
-            DialogListController dialogController = fxmlLoader.getController();
-            dialogController.setTreeMap(treeMap); // Устанавливаем TreeMap
 
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Текущие объекты");
-            stage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/table.png").toExternalForm()));
-            stage.setScene(new Scene(root));
-            stage.showAndWait(); // Показываем окно и ждем, пока его закроют
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    @FXML
+    private void showTableView() {
+
+        // Очистить таблицу перед добавлением новых данных
+        tableView.getItems().clear();
+        tableView.getColumns().clear();
+        treeMap = habitat.spawnTimes;
+
+        //tableView = new TableView<Map.Entry<Integer, Long>>();
+
+        //ObservableList<Map.Entry<Integer, Long>> teamMembers = FXCollections.observableArrayList(treeMap.entrySet());
+
+
+//        TableColumn<Map.Entry<Integer, Long>, Integer> IDColumn = (TableColumn<Map.Entry<Integer, Long>, Integer>) tableView.getColumns().get(0);
+//        IDColumn.setCellValueFactory(new PropertyValueFactory<Map.Entry<Integer, Long>, Integer>("key"));
+//        tableView.getColumns().add(IDColumn);
+//
+//        TableColumn<Map.Entry<Integer, Long>, Long> valueColumn = (TableColumn<Map.Entry<Integer, Long>, Long>) tableView.getColumns().get(1);
+//        valueColumn.setCellValueFactory(new PropertyValueFactory<Map.Entry<Integer, Long>, Long>("value"));
+//        tableView.getColumns().add(valueColumn);
+
+
+
+//        tableView.setItems(teamMembers);
+//
+//        TableColumn<Map.Entry<Integer, Long>, Integer> IDColumn = new TableColumn<Map.Entry<Integer, Long>, Integer>("key");
+//        IDColumn.setCellValueFactory(new PropertyValueFactory<Map.Entry<Integer, Long>, Integer>("key"));
+//        tableView.getColumns().add(IDColumn);
+//
+//        TableColumn<Map.Entry<Integer, Long>, Long> valueColumn = new TableColumn<Map.Entry<Integer, Long>, Long>("value");
+//        valueColumn.setCellValueFactory(new PropertyValueFactory<Map.Entry<Integer, Long>, Long>("value"));
+//        tableView.getColumns().add(valueColumn);
+
+
+        // Добавляем данные в колонки таблицы
+        TableColumn<Map.Entry<Integer, Long>, Integer> keyColumn = new TableColumn<>("Key");
+        keyColumn.setCellValueFactory(cellData -> {
+            Integer key = cellData.getValue().getKey();
+            return new javafx.beans.value.ObservableValueBase<Integer>() {
+                @Override
+                public Integer getValue() {
+                    return key;
+                }
+            };
+        });
+
+        TableColumn<Map.Entry<Integer, Long>, Long> valueColumn = new TableColumn<>("Value");
+        valueColumn.setCellValueFactory(cellData -> {
+            Long value = cellData.getValue().getValue();
+            return new javafx.beans.value.ObservableValueBase<Long>() {
+                @Override
+                public Long getValue() {
+                    return value;
+                }
+            };
+        });
+
+        tableView.getColumns().addAll(keyColumn, valueColumn);
+
+        // Добавляем данные в таблицу
+        for (Map.Entry<Integer, Long> entry : treeMap.entrySet()) {
+            tableView.getItems().add(entry);
         }
+
+        // Показываем TableView после создания
+        tableView.setVisible(true);
     }
 
 }
