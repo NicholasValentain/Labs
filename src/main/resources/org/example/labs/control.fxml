@@ -51,6 +51,7 @@
                 <Button fx:id="btnStart" text="СТАРТ (B)" style="-fx-font-size: 26px; -fx-font-weight: bold;" onAction="#click" layoutX="1230" layoutY="20" prefWidth="160" prefHeight="60"/>
                 <Button fx:id="btnStop" text="СТОП (E)" style="-fx-font-size: 26px; -fx-font-weight: bold;" onAction="#click" layoutX="1410" layoutY="20" prefWidth="160" prefHeight="60"/>
                 <Button fx:id="btnList" text="Текущие объекты" style="-fx-font-size: 26px; -fx-font-weight: bold;" onAction="#openDialog" layoutX="1230" layoutY="740" prefWidth="320" prefHeight="60"/>
+
                 <fx:define>
                     <ToggleGroup fx:id="group"/>
                 </fx:define>
