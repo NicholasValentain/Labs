@@ -7,7 +7,9 @@ abstract class Ant implements IBehaviour {
     protected ImageView imageView; // Поле для изображения
     protected long birthTime; // Время рождения
     protected long lifeTime;
-
+    public double posX;
+    public double posY;
+    public boolean stayInZero = false;
 
     public Ant(String imagePath, long birthTime, long  lifeTime) {
         Image image = new Image(getClass().getResourceAsStream(imagePath)); // Изображение объекта
@@ -21,9 +23,6 @@ abstract class Ant implements IBehaviour {
     public ImageView getImageView() {
         return imageView;
     }
-    @Override
-    public abstract void move();
-
     public long getBirthTime() {
         return birthTime;
     }

@@ -26,7 +26,7 @@ public class Habitat {
     private StackPane AntList;
     private Random random;
     private AnimationTimer simulationTimer;
-    private List<Ant> ants; // Добавим объявление переменной ants
+    public Vector<Ant> ants; // Добавим объявление переменной ants
 
 
 
@@ -92,7 +92,9 @@ public class Habitat {
 
         simulationStartTime = System.currentTimeMillis();
         AntList.getChildren().clear();
-        ants.clear(); // Очищаем список муравьев
+        synchronized (ants) {
+            ants.clear(); // Очищаем список муравьев
+        }
         statisticsLabel.setText("");
         simulationTimer.start();
     }
@@ -162,10 +164,27 @@ public class Habitat {
     private void spawnAnt(Ant ant, long currentTime) {
         // Отменяем центрирование только для добавленных муравьев
         StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
-        ant.getImageView().setTranslateX(random.nextDouble() * 1150);
-        ant.getImageView().setTranslateY(random.nextDouble() * 850);
+
+        double posX;
+        double posY;
+
+        while (true) {
+            posX = random.nextDouble() * 1150;
+            posY = random.nextDouble() * 850;
+            if(posX != 0 && posY != 0) {
+                ant.getImageView().setTranslateX(posX);
+                ant.getImageView().setTranslateY(posY);
+                ant.posX = posX;
+                ant.posY = posY;
+                break;
+            }
+        }
+
         AntList.getChildren().add(ant.getImageView());
-        ants.add(ant);
+        synchronized (ants) {
+            ants.add(ant);
+        }
+
 
 
         identifiers.add(ID);
@@ -174,88 +193,90 @@ public class Habitat {
     }
 
     private void updateStatistics() {
-        long simulationTime = simulationTimes;
+        synchronized (ants) {
+            long simulationTime = simulationTimes;
 
-        int workerAntsCount = 0;
-        int warriorAntsCount = 0;
+            int workerAntsCount = 0;
+            int warriorAntsCount = 0;
 
-        for (Ant ant : ants) {
-            if (ant instanceof WorkerAnt) {
-                workerAntsCount++;
-            } else if (ant instanceof WarriorAnt) {
-                warriorAntsCount++;
+
+            for (Ant ant : ants) {
+                if (ant instanceof WorkerAnt) {
+                    workerAntsCount++;
+                } else if (ant instanceof WarriorAnt) {
+                    warriorAntsCount++;
+                }
             }
-        }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Статистика");
-        alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
-
-
-        // Get the Stage.
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        // Add a custom icon.
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png")));
-
-        String simulationTimeString;
-        long hours = simulationTime / 3600;
-        long minutes = (simulationTime % 3600) / 60;
-        long seconds = simulationTime % 60;
-        simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours, minutes, seconds);
-
-        String statistics = String.format("%sРабочих: %d\nСолдат Ants: %d",
-                simulationTimeString, workerAntsCount, warriorAntsCount);
-
-        TextArea textArea = new TextArea(statistics);
-        textArea.setPrefColumnCount(20);
-        textArea.setPrefRowCount(5);
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-        alert.getDialogPane().setContent(textArea);
-        //alert.showAndWait();
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            simulationTimer.stop();
-            isExit = true;
-            AntList.getChildren().clear();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Статистика");
+            alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
 
 
-            identifiers.clear();
-            spawnTimes.clear();
-            ID = 0;
+            // Get the Stage.
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            // Add a custom icon.
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png")));
 
-        }
-        else {
-            paused = false;
+            String simulationTimeString;
+            long hours = simulationTime / 3600;
+            long minutes = (simulationTime % 3600) / 60;
+            long seconds = simulationTime % 60;
+            simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours, minutes, seconds);
+
+            String statistics = String.format("%sРабочих: %d\nСолдат Ants: %d",
+                    simulationTimeString, workerAntsCount, warriorAntsCount);
+
+            TextArea textArea = new TextArea(statistics);
+            textArea.setPrefColumnCount(20);
+            textArea.setPrefRowCount(5);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+            alert.getDialogPane().setContent(textArea);
+            //alert.showAndWait();
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                simulationTimer.stop();
+                isExit = true;
+                AntList.getChildren().clear();
+
+
+                identifiers.clear();
+                spawnTimes.clear();
+                ID = 0;
+
+            } else {
+                paused = false;
+            }
         }
     }
 
     private void clearDeadFish(long currentTime) {
         List<AtomicReference<Ant>> foundedFishList = new ArrayList<>();
         AtomicReference<Ant> foundedFish = new AtomicReference<>(); // Временная переменная для объекта
-        ants.forEach(tmp -> { // Перебор массива
-            if (currentTime - tmp.getBirthTime() == tmp.getLifeTime()) { // Проверка на смэрть  не >=, а ==
 
-                AtomicInteger foundedId = new AtomicInteger(); // Временная переменная для ID
-                spawnTimes.forEach((id, birthTime) -> {
-                    if (tmp.getBirthTime() == birthTime) { // Находим объект с таким же временем в treeMap
-                        foundedId.set(id); // Берём ID этого элемента
-                        //System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime()+ " " + id);
-                    }
-                });
-                identifiers.remove(foundedId.get()); // Удаляем его из hashSet
-                spawnTimes.remove(foundedId.get()); // Удаляем его из treeMap
-                AntList.getChildren().remove(tmp.getImageView()); // Удаляем из Pane
-                foundedFish.set(tmp); // Берём этот элемент и копируем в временную переменную
-                foundedFishList.add(foundedFish);
-                //
+        synchronized (ants){
+            ants.forEach(tmp -> { // Перебор массива
+                if (currentTime - tmp.getBirthTime() == tmp.getLifeTime()) { // Проверка на смэрть  не >=, а ==
+
+                    AtomicInteger foundedId = new AtomicInteger(); // Временная переменная для ID
+                    spawnTimes.forEach((id, birthTime) -> {
+                        if (tmp.getBirthTime() == birthTime) { // Находим объект с таким же временем в treeMap
+                            foundedId.set(id); // Берём ID этого элемента
+                            //System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime()+ " " + id);
+                        }
+                    });
+                    identifiers.remove(foundedId.get()); // Удаляем его из hashSet
+                    spawnTimes.remove(foundedId.get()); // Удаляем его из treeMap
+                    AntList.getChildren().remove(tmp.getImageView()); // Удаляем из Pane
+                    foundedFish.set(tmp); // Берём этот элемент и копируем в временную переменную
+                    foundedFishList.add(foundedFish);
+                    //
+                }
+            });
+            for (AtomicReference<Ant> atomicRef : foundedFishList) {
+                ants.remove(atomicRef.get()); // Удаляем из листа
             }
-        });
-        for (AtomicReference<Ant> atomicRef : foundedFishList) {
-            ants.remove(atomicRef.get()); // Удаляем из листа
         }
-
     }
-
-
 }

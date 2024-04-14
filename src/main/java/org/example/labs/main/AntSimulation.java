@@ -18,6 +18,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.labs.model.Habitat;
 
+import org.example.labs.model.WarriorAntAI;
+import org.example.labs.model.WorkerAntAI;
+
 import java.io.IOException;
 
 public class AntSimulation extends Application {
@@ -160,7 +163,17 @@ public class AntSimulation extends Application {
         primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm()));
         primaryStage.setTitle("Ant Simulation"); // Установка названия программы
         primaryStage.setScene(scene);
+
+        WarriorAntAI warriorantAI = new WarriorAntAI(habitat,"AI WarriorAnt");
+        WorkerAntAI workerantAI = new WorkerAntAI(habitat, "AI WorkerAntAI");
+
         primaryStage.show();
+
+        //warriorantAI.setPriority(1);
+        //workerantAI.setPriority(1);
+        warriorantAI.start();
+        workerantAI.start();
+
     }
 
 
