@@ -115,6 +115,8 @@ public class AntSimulation extends Application {
                         controller.btnStop.setDisable(false);
                         controller.N1.setDisable(true);
                         controller.N2.setDisable(true);
+                        controller.L1.setDisable(true);
+                        controller.L2.setDisable(true);
                         controller.P1.setDisable(true);
                         controller.P2.setDisable(true);
                         controller.cbShowInfo.setDisable(true);
@@ -130,6 +132,8 @@ public class AntSimulation extends Application {
                         }
                         controller.N1.setDisable(false);
                         controller.N2.setDisable(false);
+                        controller.L1.setDisable(false);
+                        controller.L2.setDisable(false);
                         controller.P1.setDisable(false);
                         controller.P2.setDisable(false);
                         controller.cbShowInfo.setDisable(false);

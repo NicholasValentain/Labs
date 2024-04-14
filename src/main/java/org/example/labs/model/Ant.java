@@ -9,7 +9,7 @@ abstract class Ant implements IBehaviour {
     protected long lifeTime;
 
 
-    public Ant(String imagePath,long birthTime, long lifeTime) {
+    public Ant(String imagePath, long birthTime, long  lifeTime) {
         Image image = new Image(getClass().getResourceAsStream(imagePath)); // Изображение объекта
         this.birthTime = birthTime;
         this.lifeTime = lifeTime;

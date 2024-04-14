@@ -31,7 +31,7 @@ public class Habitat {
 
 
     private HashSet<Integer> identifiers;
-    private TreeMap<Integer, Long> spawnTimes;
+    public TreeMap<Integer, Long> spawnTimes;
     int ID;
 
 
@@ -135,7 +135,7 @@ public class Habitat {
                     simulationTimes = ((currentTime - simulationStartTime) / 1000) - waitTime;
 
                     //long elapsedTime = (now / 1_000_000_000) - (simulationStartTime / 1000);
-                    System.out.println("============" + simulationTimes);
+                    //System.out.println("============" + simulationTimes);
 
                     clearDeadFish(simulationTimes);
 
@@ -150,7 +150,7 @@ public class Habitat {
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
                     if (simulationTimes - lastWarriorTime >= N2) {
                         if (random.nextDouble() <= P2) {
-                            spawnAnt(new WarriorAnt(simulationTimes,L2), simulationTimes);
+                            spawnAnt(new WarriorAnt(simulationTimes, L2), simulationTimes);
                         }
                         lastWarriorTime = simulationTimes;
                     }
@@ -190,19 +190,6 @@ public class Habitat {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Статистика");
         alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
-
-
-        for(int state : identifiers){
-
-            System.out.println(state);
-        }
-        for(Map.Entry<Integer, Long> item : spawnTimes.entrySet()){
-
-            System.out.printf("Key: %d  Value: %s \n", item.getKey(), item.getValue());
-        }
-
-
-
 
 
         // Get the Stage.
@@ -253,7 +240,7 @@ public class Habitat {
                 spawnTimes.forEach((id, birthTime) -> {
                     if (tmp.getBirthTime() == birthTime) { // Находим объект с таким же временем в treeMap
                         foundedId.set(id); // Берём ID этого элемента
-                        System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime()+ " " + id);
+                        //System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime()+ " " + id);
                     }
                 });
                 identifiers.remove(foundedId.get()); // Удаляем его из hashSet

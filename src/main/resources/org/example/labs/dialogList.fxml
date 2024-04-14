@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.labs.controllres.DialogListController">
+    <TableView fx:id="tableView" prefWidth="300">
+        <columns>
+            <TableColumn text="Key"  prefWidth="150">
+            </TableColumn>
+            <TableColumn text="Value" prefWidth="150">
+            </TableColumn>
+        </columns>
+    </TableView>
+</VBox>

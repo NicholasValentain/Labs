@@ -4,18 +4,27 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.labs.model.Habitat; // Импортируем класс Habitat
 import org.example.labs.main.AntSimulation;
 
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 public class controller {
     @FXML
-    public Button btnStart, btnStop;
+    public Button btnStart, btnStop, btnList;
     @FXML
     public RadioButton ShowTime, HideTime;
     @FXML
@@ -24,6 +33,11 @@ public class controller {
     public TextField N1, N2, L1, L2;
     @FXML
     public ComboBox P1, P2;
+
+    //@FXML
+    //public TableView<Map.Entry<Integer, Long>> tableView;
+
+    public TreeMap<Integer, Long> treeMap;
     private Habitat habitat; // Добавляем поле для хранения ссылки на habitat
     private AntSimulation antSimulation;
 
@@ -44,9 +58,11 @@ public class controller {
         // Установка списка элементов в ComboBox
         P1.setItems(options);
         P2.setItems(options);
-        P1.setValue("10");
+        P1.setValue("100");
         P2.setValue("100");
 
+
+        //tableView.setVisible(false);
     }
 
     @FXML
@@ -60,6 +76,8 @@ public class controller {
 
                     N1.setDisable(true);
                     N2.setDisable(true);
+                    L1.setDisable(true);
+                    L2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
                     cbShowInfo.setDisable(true);
@@ -75,6 +93,8 @@ public class controller {
 
                     N1.setDisable(false);
                     N2.setDisable(false);
+                    L1.setDisable(false);
+                    L2.setDisable(false);
                     P1.setDisable(false);
                     P2.setDisable(false);
                     cbShowInfo.setDisable(false);
@@ -106,7 +126,6 @@ public class controller {
         int n2 = 1;
         int l1 = 1;
         int l2 = 1;
-
         try {
             n1 = Integer.parseInt(N1.getText());
             n2 = Integer.parseInt(N2.getText());
@@ -114,6 +133,7 @@ public class controller {
             l2 = Integer.parseInt(L2.getText());
 
             if (n1 < 1 || n2 < 1 || l1 < 1 || l2 < 1) throw new NumberFormatException("Число меньше 1");
+
 
             habitat.N1 = n1;
             habitat.N2 = n2;
@@ -159,6 +179,8 @@ public class controller {
 
                     N1.setDisable(true);
                     N2.setDisable(true);
+                    L1.setDisable(true);
+                    L2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
                     cbShowInfo.setDisable(true);
@@ -175,6 +197,8 @@ public class controller {
 
                     N1.setDisable(false);
                     N2.setDisable(false);
+                    L1.setDisable(false);
+                    L2.setDisable(false);
                     P1.setDisable(false);
                     P2.setDisable(false);
                     cbShowInfo.setDisable(false);
@@ -226,4 +250,24 @@ public class controller {
             }
         }
     }
+    @FXML
+    private void openDialog() {
+        try {
+            treeMap = habitat.spawnTimes;
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/labs/dialogList.fxml"));
+            Parent root = fxmlLoader.load();
+            DialogListController dialogController = fxmlLoader.getController();
+            dialogController.setTreeMap(treeMap); // Устанавливаем TreeMap
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Текущие объекты");
+            stage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/table.png").toExternalForm()));
+            stage.setScene(new Scene(root));
+            stage.showAndWait(); // Показываем окно и ждем, пока его закроют
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
