@@ -4,6 +4,11 @@ import java.util.List;
 
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import java.util.ArrayList; // Добавим импорт для ArrayList
 import javafx.scene.control.Label;
@@ -12,62 +17,110 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
+import javafx.stage.Stage;
+
+import java.util.Optional;
 import java.util.Random;
 
 public class Habitat {
+    private static Habitat instance; // Статическое поле для хранения единственного экземпляра
     private StackPane root;
+    private StackPane AntList;
     private Random random;
     private AnimationTimer simulationTimer;
     private List<Ant> ants; // Добавим объявление переменной ants
-    private long simulationStartTime; // Время начала симуляции
+    private long simulationStartTime = 0; // Время начала симуляции
     private Label statisticsLabel; // Label для вывода статистики
     private Rectangle statisticsRectangle; // Rectangle для вывода статистики
-    private static final int N1 = 5; // Интервал для рабочих муравьев (в секундах)
-    private static final double P1 = 0.3; // Вероятность для рабочих муравьев
-    private static final int N2 = 3; // интервал для муравьев-воинов (в секундах)
-    private static final double P2 = 0.5; // вероятность для муравьев-воинов
+    public boolean moreInfo;
+    public volatile boolean paused = false;
+    public  volatile  boolean isExit = false;
+    private boolean startFlag; // Флаг для проверки работы симуляции
+    public int N1; // Интервал для рабочих муравьев (в секундах)
+    public double P1; // Вероятность для рабочих муравьев
+    public int N2; // интервал для муравьев-воинов (в секундах)
+    public double P2; // вероятность для муравьев-воинов
 
-    public Habitat(StackPane root) {
+    private long waitTime = 0;
+    private long simulationTimes = 0;
+    private long currentTime = 0;
+
+    public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
+        this.AntList = AntList;
         this.random = new Random();
         this.simulationTimer = createSimulationTimer();
         this.ants = new ArrayList<>(); // Инициализируем переменную ants
         this.statisticsLabel = new Label();
         this.statisticsRectangle = new Rectangle();
     }
+    // Статический метод для получения единственного экземпляра класса
+    public static Habitat getInstance(StackPane root, StackPane AntList) {
+        if (instance == null) {
+            instance = new Habitat(root, AntList);
+        }
+        return instance;
+    }
 
     public void startSimulation() {
+        isExit = false;
+        paused = false;
+        waitTime = 0;
         simulationStartTime = System.currentTimeMillis();
+        AntList.getChildren().clear();
         ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
-        root.getChildren().remove(statisticsRectangle);
+//        root.getChildren().remove(statisticsRectangle);
+//        root.getChildren().remove(statisticsLabel);
         simulationTimer.start();
     }
 
     public void stopSimulation() {
-        simulationTimer.stop();
-        root.getChildren().clear();
-        updateStatistics();
+        //AntList.getChildren().clear();
+        paused = true;
+        if(moreInfo) updateStatistics();
+        else {
+            simulationTimer.stop();
+            AntList.getChildren().clear();
+            isExit = true;
+        }
     }
 
+
     private AnimationTimer createSimulationTimer() {
-        long[] lastSpawnTimeWorker = { System.nanoTime() };
-        long[] lastSpawnTimeWarrior = { System.nanoTime() };
+        long startTime = System.nanoTime();
+        final long[] lastWorkerTime = {0};
+        final long[] lastWarriorTime = {0};
 
         return new AnimationTimer() {
             @Override
             public void handle(long now) {
-                long elapsedTimeWorker = (now - lastSpawnTimeWorker[0]) / 1_000_000_000;
-                long elapsedTimeWarrior = (now - lastSpawnTimeWarrior[0]) / 1_000_000_000;
-
-                if (elapsedTimeWorker >= N1 && random.nextDouble() <= P1) {
-                    spawnAnt(new WorkerAnt());
-                    lastSpawnTimeWorker[0] = now;
+                if (paused) {
+                    currentTime = ((System.currentTimeMillis() - simulationStartTime) / 1000);
+                    waitTime = (currentTime - simulationTimes);
+                    //System.out.println(waitTime + " " + currentTime + " " + simulationTimes);
+                    //return;
                 }
+                else {
+                    currentTime = System.currentTimeMillis();
+                    simulationTimes = ((currentTime - simulationStartTime) / 1000) - waitTime;
+                    long elapsedTime = (now - startTime) / 1_000_000_000;
 
-                if (elapsedTimeWarrior >= N2 && random.nextDouble() <= P2) {
-                    spawnAnt(new WarriorAnt());
-                    lastSpawnTimeWarrior[0] = now;
+                    // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
+                    if (elapsedTime - lastWorkerTime[0] >= N1) {
+                        if (random.nextDouble() <= P1) {
+                            spawnAnt(new WorkerAnt());
+                        }
+                        lastWorkerTime[0] = elapsedTime;
+                    }
+
+                    // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
+                    if (elapsedTime - lastWarriorTime[0] >= N2) {
+                        if (random.nextDouble() <= P2) {
+                            spawnAnt(new WarriorAnt());
+                        }
+                        lastWarriorTime[0] = elapsedTime;
+                    }
                 }
             }
         };
@@ -78,13 +131,12 @@ public class Habitat {
         StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
         ant.getImageView().setTranslateX(random.nextDouble() * 1150);
         ant.getImageView().setTranslateY(random.nextDouble() * 850);
-        root.getChildren().add(ant.getImageView());
+        AntList.getChildren().add(ant.getImageView());
         ants.add(ant);
     }
 
     private void updateStatistics() {
-        long simulationEndTime = System.currentTimeMillis();
-        long simulationTime = (simulationEndTime - simulationStartTime) / 1000;
+        long simulationTime = simulationTimes;
 
         int workerAntsCount = 0;
         int warriorAntsCount = 0;
@@ -97,31 +149,39 @@ public class Habitat {
             }
         }
 
-        // Очищаем root от всех элементов, включая статистику
-        root.getChildren().clear();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Статистика");
+        alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
 
-        String statistics = String.format("Simulation Time: %d seconds\nWorker Ants: %d\nWarrior Ants: %d",
-                simulationTime, workerAntsCount, warriorAntsCount);
+        // Get the Stage.
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        // Add a custom icon.
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png")));
 
-        // Выводим статистику
-        statisticsLabel.setText(statistics);
-        statisticsLabel.setFont(Font.font("Arial Rounded MT", 25)); // устанавливаем шрифт Arial Rounded MT размером 35
+        String simulationTimeString;
+        long hours = simulationTime / 3600;
+        long minutes = (simulationTime % 3600) / 60;
+        long seconds = simulationTime % 60;
+        simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours, minutes, seconds);
 
-        statisticsRectangle.setWidth(500); // Устанавливаем ширину
-        statisticsRectangle.setHeight(200); // Устанавливаем высоту
-        statisticsRectangle.setFill(Color.WHITE);// Устанавливаем цвет заливки прямоугольника
+        String statistics = String.format("%sРабочих: %d\nСолдат Ants: %d",
+                simulationTimeString, workerAntsCount, warriorAntsCount);
 
-        root.getChildren().add(statisticsRectangle);// Добавляем прямоугольник на сцену или другой контейнер
-        root.getChildren().add(statisticsLabel);
-    }
-
-    // Метод для поиска муравья по его ImageView
-    private Ant findAntByImageView(ImageView imageView) {
-        for (Ant ant : ants) {
-            if (ant.getImageView() == imageView) {
-                return ant;
-            }
+        TextArea textArea = new TextArea(statistics);
+        textArea.setPrefColumnCount(20);
+        textArea.setPrefRowCount(5);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        alert.getDialogPane().setContent(textArea);
+        //alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            simulationTimer.stop();
+            isExit = true;
+            AntList.getChildren().clear();
         }
-        return null;
+        else {
+            paused = false;
+        }
     }
 }
