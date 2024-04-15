@@ -1,5 +1,7 @@
 package org.example.labs.model;
 
+import javafx.application.Platform;
+
 import java.util.List;
 import java.util.Vector;
 
@@ -51,17 +53,11 @@ public class WarriorAntAI extends BaseAI {
                                 double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
                                 double moveX = deltaX / distance;
                                 double moveY = deltaY / distance;
-                                ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
-                                ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
-                            }
-                            else {
-                                double deltaX = ant.posX - ant.getImageView().getTranslateX();
-                                double deltaY = ant.posY - ant.getImageView().getTranslateY();
-                                double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                                double moveX = deltaX / distance;
-                                double moveY = deltaY / distance;
-                                ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
-                                ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
+                                Platform.runLater(()->{
+                                    ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
+                                    ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
+                                });
+
                             }
                         }
                     }

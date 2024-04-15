@@ -1,5 +1,7 @@
 package org.example.labs.model;
 
+import javafx.application.Platform;
+
 import java.util.List;
 import java.util.Vector;
 
@@ -27,7 +29,6 @@ public class WorkerAntAI extends BaseAI {
                 }
                 synchronized (ants) {
                     for (int i = 0; i < ants.size() && isActive; i++) {
-                        System.out.println(ants.size());
                         Ant ant = ants.get(i);
                         // Каждый поток работает только со своим типом объекта
                         if (ant instanceof WorkerAnt) {
@@ -43,18 +44,12 @@ public class WorkerAntAI extends BaseAI {
                                 double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
                                 double moveX = deltaX / distance;
                                 double moveY = deltaY / distance;
-                                ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
-                                ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
+                                Platform.runLater(()-> {
+                                    ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
+                                    ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
+                                });
                             }
-                            else {
-                                double deltaX = ant.posX - ant.getImageView().getTranslateX();
-                                double deltaY = ant.posY - ant.getImageView().getTranslateY();
-                                double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                                double moveX = deltaX / distance;
-                                double moveY = deltaY / distance;
-                                ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
-                                ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
-                            }
+
                         }
                     }
                 }
