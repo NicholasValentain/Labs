@@ -14,16 +14,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.labs.model.Habitat; // Импортируем класс Habitat
 import org.example.labs.main.AntSimulation;
+import org.example.labs.model.WarriorAntAI;
+import org.example.labs.model.WorkerAntAI;
 
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
 import java.util.TreeMap;
 
 
-public class controller {
+public class Controller {
     @FXML
-    public Button btnStart, btnStop, btnList;
+    public Button btnStart, btnStop, btnList, btnStopWorkerAI, btnStopWarriorAI;
     @FXML
     public RadioButton ShowTime, HideTime;
     @FXML
@@ -31,7 +31,7 @@ public class controller {
     @FXML
     public TextField N1, N2, L1, L2;
     @FXML
-    public ComboBox P1, P2;
+    public ComboBox P1, P2, WorkerPriority, WarriorPriority;
 
     //@FXML
     //public TableView<Map.Entry<Integer, Long>> tableView;
@@ -43,6 +43,8 @@ public class controller {
     // Создание списка элементов для ComboBox
     ObservableList<String> options = FXCollections.observableArrayList(
             "10", "20", "30", "40", "50", "60", "70", "80", "90", "100" );
+    ObservableList<String> prioritys = FXCollections.observableArrayList(
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" );
 
     // Метод для установки ссылки на habitat
     public void setHabitat(Habitat habitat, AntSimulation antSimulation) {
@@ -59,6 +61,10 @@ public class controller {
         P2.setItems(options);
         P1.setValue("100");
         P2.setValue("100");
+        WorkerPriority.setItems(prioritys);
+        WarriorPriority.setItems(prioritys);
+        WorkerPriority.setValue("5");
+        WarriorPriority.setValue("5");
 
 
         //tableView.setVisible(false);
@@ -79,7 +85,38 @@ public class controller {
                     L2.setDisable(true);
                     P1.setDisable(true);
                     P2.setDisable(true);
+                    WorkerPriority.setDisable(true);
+                    WarriorPriority.setDisable(true);
                     cbShowInfo.setDisable(true);
+
+
+
+                    //WorkerAntAI.getInstance().isActive = true;
+                    //WorkerAntAI.getInstance().monitor.notify();
+                    //WarriorAntAI.getInstance().isActive = true;
+                   //WarriorAntAI.getInstance().monitor.notify();
+
+                    WorkerAntAI Workerth = WorkerAntAI.getInstance();
+                    WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+
+
+                    if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
+                        Workerth.isActive = true;
+                        String monitor = Workerth.monitor;
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+
+                    if (btnStopWarriorAI.getText().equals("Солдат: ON")) {
+                        Warriorth.isActive = true;
+                        String monitor = Warriorth.monitor;
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+
+
                     antSimulation.startSimulation();
                 }
                 break;
@@ -89,14 +126,21 @@ public class controller {
                         btnStart.setDisable(true);
                         btnStop.setDisable(true);
                     }
+                    if(!cbShowInfo.isSelected()) {
+                        N1.setDisable(false);
+                        N2.setDisable(false);
+                        L1.setDisable(false);
+                        L2.setDisable(false);
+                        P1.setDisable(false);
+                        P2.setDisable(false);
+                        WorkerPriority.setDisable(false);
+                        WarriorPriority.setDisable(false);
+                        cbShowInfo.setDisable(false);
+                    }
 
-                    N1.setDisable(false);
-                    N2.setDisable(false);
-                    L1.setDisable(false);
-                    L2.setDisable(false);
-                    P1.setDisable(false);
-                    P2.setDisable(false);
-                    cbShowInfo.setDisable(false);
+                    WorkerAntAI.getInstance().isActive = false;
+                    WarriorAntAI.getInstance().isActive = false;
+
                     antSimulation.stopSimulation();
                 }
                 break;
@@ -125,6 +169,7 @@ public class controller {
         int n2 = 1;
         int l1 = 1;
         int l2 = 1;
+
         try {
             n1 = Integer.parseInt(N1.getText());
             n2 = Integer.parseInt(N2.getText());
@@ -141,6 +186,9 @@ public class controller {
 
             habitat.P1 = Double.parseDouble((String) P1.getValue()) / 100;
             habitat.P2 = Double.parseDouble((String) P2.getValue()) / 100;
+            WorkerAntAI.getInstance().setPriority(Integer.parseInt((String) WorkerPriority.getValue()));
+            WarriorAntAI.getInstance().setPriority(Integer.parseInt((String) WarriorPriority.getValue()));
+
 
         }
         catch (NumberFormatException ex) {
@@ -269,4 +317,35 @@ public class controller {
         }
     }
 
+    @FXML
+    private void controlWorkerAI(){
+        String monitor = WorkerAntAI.getInstance().monitor;
+        if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
+            WorkerAntAI.getInstance().isActive = false;
+            btnStopWorkerAI.setText("Рабочих: OFF");
+        }
+        else {
+            WorkerAntAI.getInstance().isActive = true;
+            synchronized (monitor) {
+                monitor.notify();
+            }
+            btnStopWorkerAI.setText("Рабочих: ON");
+        }
+    }
+
+    @FXML
+    private void controlWarriorAI(){
+        String monitor = WarriorAntAI.getInstance().monitor;
+        if (btnStopWarriorAI.getText().equals("Солдат: ON")) {
+            WarriorAntAI.getInstance().isActive = false;
+            btnStopWarriorAI.setText("Солдат: OFF");
+        }
+        else {
+            WarriorAntAI.getInstance().isActive = true;
+            synchronized (monitor) {
+                monitor.notify();
+            }
+            btnStopWarriorAI.setText("Солдат: ON");
+        }
+    }
 }

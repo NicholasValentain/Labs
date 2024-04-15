@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.labs.model.Habitat;
+import org.example.labs.controllres.Controller;
 
 import org.example.labs.model.WarriorAntAI;
 import org.example.labs.model.WorkerAntAI;
@@ -31,7 +32,7 @@ public class AntSimulation extends Application {
     private StackPane AntList = new StackPane();
     public StackPane root;
     private Habitat habitat;
-    private org.example.labs.controllres.controller controller;
+    private Controller controller;
     private Text descriptionText;
     private AnimationTimer timer;
     private long waitTime = 0;
@@ -59,12 +60,9 @@ public class AntSimulation extends Application {
                 BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, bsize);
         Background bGround = new Background(bImg);
         root.setBackground(bGround);
-        //root.setStyle("-fx-background-image: url('/org/example/labs/Background/soil2.png'); -fx-background-size: cover;"); // Установка фона окна
-
 
         root.getChildren().add(AntList);
         habitat = Habitat.getInstance(root, AntList);
-
         descriptionText = new Text("Нажмите 'B' чтобы начать симуляцию, 'E' чтобы остановить");
         descriptionText.setFont(Font.font("Arial Rounded MT", 35)); // Устанавливаем шрифт Arial Rounded MT размером 35
         StackPane.setAlignment(descriptionText, Pos.TOP_LEFT); // Отменяем центрирование
@@ -79,17 +77,14 @@ public class AntSimulation extends Application {
 
         Scene scene = new Scene(root, 1600, 900); // Основное окно
 
-        // Окно для кнопок
-        Rectangle rectangleManagement = new Rectangle(400,900,Color.WHITE);
+        Rectangle rectangleManagement = new Rectangle(400,900,Color.WHITE); // Окно для кнопок
         StackPane.setAlignment(rectangleManagement, Pos.TOP_LEFT); // Отменяем центрирование
         rectangleManagement.setTranslateX(1200); // Устанавливаем координату X
         rectangleManagement.setTranslateY(0); // Устанавливаем координату Y
         rectangleManagement.setFill(Color.GRAY);// Устанавливаем цвет заливки прямоугольника
-
         rectangleManagement.setStroke(Color.BLACK);  // Установка цвета обводки
         rectangleManagement.setStrokeWidth(5); // Установка ширины обводки
         rectangleManagement.setStrokeType(StrokeType.INSIDE); // Установка типа обводки внутри
-
         root.getChildren().add(rectangleManagement);// Добавляем прямоугольник на сцену
 
         StackPane FXMLstackPane = new StackPane();
@@ -98,19 +93,20 @@ public class AntSimulation extends Application {
         controller = loader.getController();
         controller.setHabitat(habitat, this);
 
+        habitat.setController(controller);
+
         FXMLstackPane.getChildren().add(buttonNode);
         root.getChildren().add(FXMLstackPane);
 
         times = new Text("Время: 00:00:00"); // Текст для информации о времени
-        times.setFont(Font.font("Arial Rounded MT", 35)); // устанавливаем шрифт Arial Rounded MT размером 20
+        times.setFont(Font.font("Arial Rounded MT", 24)); // устанавливаем шрифт Arial Rounded MT размером 20
         times.setFill(Color.BLACK); // устанавливаем цвет текста
         StackPane.setAlignment(times, Pos.TOP_LEFT);
-        times.setTranslateX(1280); // Устанавливаем координату X
-        times.setTranslateY(840); // Устанавливаем координату Y
+        times.setTranslateX(1310); // Устанавливаем координату X
+        times.setTranslateY(865); // Устанавливаем координату Y
         root.getChildren().add(times);
 
         scene.setOnKeyPressed(event -> {
-
             switch (event.getCode()) {
                 case KeyCode.B:
                     if(!startFlag) {
@@ -159,21 +155,16 @@ public class AntSimulation extends Application {
             }
         });
 
-        // Добавление иконки
-        primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm()));
+
+        primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm())); // Добавление иконки
         primaryStage.setTitle("Ant Simulation"); // Установка названия программы
         primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest(t -> System.exit(0)); // Остановка приложения по нажатию крестика
 
-        WarriorAntAI warriorantAI = new WarriorAntAI(habitat,"AI WarriorAnt");
-        WorkerAntAI workerantAI = new WorkerAntAI(habitat, "AI WorkerAntAI");
+        WorkerAntAI.getInstance(habitat).start();
+        WarriorAntAI.getInstance(habitat).start();
 
         primaryStage.show();
-
-        //warriorantAI.setPriority(1);
-        //workerantAI.setPriority(1);
-        warriorantAI.start();
-        workerantAI.start();
-
     }
 
 
@@ -192,7 +183,6 @@ public class AntSimulation extends Application {
                 } else {
                     currentTime = ((System.currentTimeMillis() - simulationStartTime) / 1000);
                     waitTime = (currentTime - simulationTime);
-                    //System.out.println(waitTime + " " + currentTime);
                 }
             }
         };
@@ -203,10 +193,8 @@ public class AntSimulation extends Application {
     private void stopTimer() {
         if (timer != null) {
             timer.stop();
-            // Сброс начального времени симуляции до исходного значения
-            simulationStartTime = System.currentTimeMillis();
-            // Сброс текста отображаемого времени
-            times.setText("Время: 00:00:00");
+            simulationStartTime = System.currentTimeMillis(); // Сброс начального времени симуляции до исходного значения
+            times.setText("Время: 00:00:00");// Сброс текста отображаемого времени
             waitTime = 0;
         }
     }
@@ -219,7 +207,6 @@ public class AntSimulation extends Application {
         startTimer(); // Запускаем таймер
     }
     public void stopSimulation() {
-        //root.getChildren().remove(times);
         habitat.stopSimulation();
         if(habitat.isExit) {
             controller.btnStop.setDisable(true);

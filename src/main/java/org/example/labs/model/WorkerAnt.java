@@ -7,7 +7,7 @@ class WorkerAnt extends Ant {
     private Random random;
 
     public WorkerAnt(long birthTime, long  lifeTime) {
-        super("/org/example/labs/AntGIF/statistics.png", birthTime, lifeTime);
+        super("/org/example/labs/AntGIF/ant1.gif", birthTime, lifeTime);
         this.random = new Random();
     }
 }

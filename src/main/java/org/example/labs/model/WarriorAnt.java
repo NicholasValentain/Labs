@@ -7,7 +7,7 @@ class WarriorAnt extends Ant {
     private Random random;
 
     public WarriorAnt(long birthTime, long  lifeTime) {
-        super("/org/example/labs/AntGIF/table.png", birthTime, lifeTime);
+        super("/org/example/labs/AntGIF/ant2.gif", birthTime, lifeTime);
         this.random = new Random();
     }
 

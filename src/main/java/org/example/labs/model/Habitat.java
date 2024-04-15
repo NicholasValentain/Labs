@@ -10,13 +10,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
+import org.example.labs.controllres.Controller;
 
 import javafx.stage.Stage;
 
@@ -57,6 +54,8 @@ public class Habitat {
     long lastWorkerTime;
     long lastWarriorTime;
 
+    private Controller controller;
+
     public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
         this.AntList = AntList;
@@ -78,18 +77,17 @@ public class Habitat {
         return instance;
     }
 
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
     public void startSimulation() {
         isExit = false;
         paused = false;
         waitTime = 0;
-
-
         ID = 0;
-
         lastWorkerTime = 0;
         lastWarriorTime = 0;
-
-
         simulationStartTime = System.currentTimeMillis();
         AntList.getChildren().clear();
         ants.clear(); // Очищаем список муравьев
@@ -98,19 +96,14 @@ public class Habitat {
     }
 
     public void stopSimulation() {
-        //AntList.getChildren().clear();
         paused = true;
 
         if(moreInfo) updateStatistics();
         else {
             simulationTimer.stop();
             AntList.getChildren().clear();
-
-
             identifiers.clear();
             spawnTimes.clear();
-
-
             isExit = true;
         }
     }
@@ -125,19 +118,12 @@ public class Habitat {
                 if (paused) {
                     currentTime = ((System.currentTimeMillis() - simulationStartTime) / 1000);
                     waitTime = (currentTime - simulationTimes);
-                    //System.out.println(waitTime + " " + currentTime + " " + simulationTimes);
-                    //return;
                 }
                 else {
                     currentTime = System.currentTimeMillis();
-                    //time = currentTime - simulationStartTime;
-
                     simulationTimes = ((currentTime - simulationStartTime) / 1000) - waitTime;
 
-                    //long elapsedTime = (now / 1_000_000_000) - (simulationStartTime / 1000);
-                    //System.out.println("============" + simulationTimes);
-
-                    clearDeadFish(simulationTimes);
+                    clearDeadAnt(simulationTimes);
 
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
                     if (simulationTimes - lastWorkerTime >= N1) {
@@ -160,8 +146,7 @@ public class Habitat {
     }
 
     private void spawnAnt(Ant ant, long currentTime) {
-        // Отменяем центрирование только для добавленных муравьев
-        StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT);
+        StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT); // Отменяем центрирование только для добавленных муравьев
 
         double posX;
         double posY;
@@ -180,9 +165,6 @@ public class Habitat {
 
         AntList.getChildren().add(ant.getImageView());
         ants.add(ant);
-
-
-
         identifiers.add(ID);
         spawnTimes.put(ID, currentTime);
         ID++;
@@ -190,10 +172,8 @@ public class Habitat {
 
     private void updateStatistics() {
         long simulationTime = simulationTimes;
-
         int workerAntsCount = 0;
         int warriorAntsCount = 0;
-
 
         for (Ant ant : ants) {
             if (ant instanceof WorkerAnt) {
@@ -206,12 +186,8 @@ public class Habitat {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Статистика");
         alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
-
-
-        // Get the Stage.
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        // Add a custom icon.
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png")));
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow(); // Создаём Stage
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png"))); // Добавляем иконку.
 
         String simulationTimeString;
         long hours = simulationTime / 3600;
@@ -228,24 +204,47 @@ public class Habitat {
         textArea.setEditable(false);
         textArea.setWrapText(true);
         alert.getDialogPane().setContent(textArea);
-        //alert.showAndWait();
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             simulationTimer.stop();
             isExit = true;
             AntList.getChildren().clear();
-
-
             identifiers.clear();
             spawnTimes.clear();
             ID = 0;
-
+            controller.N1.setDisable(false);
+            controller.N2.setDisable(false);
+            controller.L1.setDisable(false);
+            controller.L2.setDisable(false);
+            controller.P1.setDisable(false);
+            controller.P2.setDisable(false);
+            controller.WorkerPriority.setDisable(false);
+            controller.WarriorPriority.setDisable(false);
+            controller.cbShowInfo.setDisable(false);
         } else {
             paused = false;
+
+            WorkerAntAI Workerth = WorkerAntAI.getInstance();
+            WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+            if (controller.btnStopWorkerAI.getText().equals("Рабочих: ON")) {
+                Workerth.isActive = true;
+                String monitor = Workerth.monitor;
+                synchronized (monitor) {
+                    monitor.notify();
+                }
+            }
+
+            if (controller.btnStopWarriorAI.getText().equals("Солдат: ON")) {
+                Warriorth.isActive = true;
+                String monitor = Warriorth.monitor;
+                synchronized (monitor) {
+                    monitor.notify();
+                }
+            }
         }
     }
 
-    private void clearDeadFish(long currentTime) {
+    private void clearDeadAnt(long currentTime) {
         List<AtomicReference<Ant>> foundedFishList = new ArrayList<>();
         AtomicReference<Ant> foundedFish = new AtomicReference<>(); // Временная переменная для объекта
 
@@ -257,7 +256,6 @@ public class Habitat {
                     spawnTimes.forEach((id, birthTime) -> {
                         if (tmp.getBirthTime() == birthTime) { // Находим объект с таким же временем в treeMap
                             foundedId.set(id); // Берём ID этого элемента
-                            //System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime()+ " " + id);
                         }
                     });
                     identifiers.remove(foundedId.get()); // Удаляем его из hashSet
@@ -265,7 +263,6 @@ public class Habitat {
                     AntList.getChildren().remove(tmp.getImageView()); // Удаляем из Pane
                     foundedFish.set(tmp); // Берём этот элемент и копируем в временную переменную
                     foundedFishList.add(foundedFish);
-                    //
                 }
             });
             for (AtomicReference<Ant> atomicRef : foundedFishList) {
