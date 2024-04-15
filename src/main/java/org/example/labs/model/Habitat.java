@@ -92,9 +92,7 @@ public class Habitat {
 
         simulationStartTime = System.currentTimeMillis();
         AntList.getChildren().clear();
-        synchronized (ants) {
-            ants.clear(); // Очищаем список муравьев
-        }
+        ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
         simulationTimer.start();
     }
@@ -181,9 +179,7 @@ public class Habitat {
         }
 
         AntList.getChildren().add(ant.getImageView());
-        synchronized (ants) {
-            ants.add(ant);
-        }
+        ants.add(ant);
 
 
 
@@ -193,61 +189,59 @@ public class Habitat {
     }
 
     private void updateStatistics() {
-        synchronized (ants) {
-            long simulationTime = simulationTimes;
+        long simulationTime = simulationTimes;
 
-            int workerAntsCount = 0;
-            int warriorAntsCount = 0;
+        int workerAntsCount = 0;
+        int warriorAntsCount = 0;
 
 
-            for (Ant ant : ants) {
-                if (ant instanceof WorkerAnt) {
-                    workerAntsCount++;
-                } else if (ant instanceof WarriorAnt) {
-                    warriorAntsCount++;
-                }
+        for (Ant ant : ants) {
+            if (ant instanceof WorkerAnt) {
+                workerAntsCount++;
+            } else if (ant instanceof WarriorAnt) {
+                warriorAntsCount++;
             }
+        }
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Статистика");
-            alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
-
-
-            // Get the Stage.
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            // Add a custom icon.
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png")));
-
-            String simulationTimeString;
-            long hours = simulationTime / 3600;
-            long minutes = (simulationTime % 3600) / 60;
-            long seconds = simulationTime % 60;
-            simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours, minutes, seconds);
-
-            String statistics = String.format("%sРабочих: %d\nСолдат Ants: %d",
-                    simulationTimeString, workerAntsCount, warriorAntsCount);
-
-            TextArea textArea = new TextArea(statistics);
-            textArea.setPrefColumnCount(20);
-            textArea.setPrefRowCount(5);
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
-            alert.getDialogPane().setContent(textArea);
-            //alert.showAndWait();
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                simulationTimer.stop();
-                isExit = true;
-                AntList.getChildren().clear();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Статистика");
+        alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
 
 
-                identifiers.clear();
-                spawnTimes.clear();
-                ID = 0;
+        // Get the Stage.
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        // Add a custom icon.
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png")));
 
-            } else {
-                paused = false;
-            }
+        String simulationTimeString;
+        long hours = simulationTime / 3600;
+        long minutes = (simulationTime % 3600) / 60;
+        long seconds = simulationTime % 60;
+        simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours, minutes, seconds);
+
+        String statistics = String.format("%sРабочих: %d\nСолдат Ants: %d",
+                simulationTimeString, workerAntsCount, warriorAntsCount);
+
+        TextArea textArea = new TextArea(statistics);
+        textArea.setPrefColumnCount(20);
+        textArea.setPrefRowCount(5);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        alert.getDialogPane().setContent(textArea);
+        //alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            simulationTimer.stop();
+            isExit = true;
+            AntList.getChildren().clear();
+
+
+            identifiers.clear();
+            spawnTimes.clear();
+            ID = 0;
+
+        } else {
+            paused = false;
         }
     }
 
