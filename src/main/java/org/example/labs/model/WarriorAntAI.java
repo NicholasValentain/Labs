@@ -31,7 +31,6 @@ public class WarriorAntAI extends BaseAI {
         this.centerY = centerY;
         this.radius = radius;
         this.angle = 0; // Начальный угол
-        monitor = "monitor war";
     }
 
     public void run() {
@@ -40,31 +39,22 @@ public class WarriorAntAI extends BaseAI {
         double angularSpeed = 0.08; // Скорость изменения угла
 
         while (true) {
-            synchronized (monitor) {
-                if (!isActive) {
-                    try {
-                        monitor.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                synchronized (ants) {
-                    for (int i = 0; i < ants.size() && isActive; i++) {
-                        System.out.println(WarriorAntAI.getInstance().getPriority());
-                        Ant ant = ants.get(i);
-                        // Каждый поток работает только со своим типом объекта
-                        if (ant instanceof WarriorAnt) {
-                            // Радиус окружности
-                            double radius = 100.0;
-                            // Вычисляем координаты объекта на окружности
-                            double x = ant.posX + radius * Math.cos(angle);
-                            double y = ant.posY + radius * Math.sin(angle);
+            synchronized (ants) {
+                for (int i = 0; i < ants.size() && isActive; i++) {
+                    System.out.println(WarriorAntAI.getInstance().getPriority());
+                    Ant ant = ants.get(i);
+                    // Каждый поток работает только со своим типом объекта
+                    if (ant instanceof WarriorAnt) {
+                        // Радиус окружности
+                        double radius = 100.0;
+                        // Вычисляем координаты объекта на окружности
+                        double x = ant.posX + radius * Math.cos(angle);
+                        double y = ant.posY + radius * Math.sin(angle);
 
-                            Platform.runLater(() -> {
-                                ant.getImageView().setTranslateX(x);
-                                ant.getImageView().setTranslateY(y);
-                            });
-                        }
+                        Platform.runLater(() -> {
+                            ant.getImageView().setTranslateX(x);
+                            ant.getImageView().setTranslateY(y);
+                        });
                     }
                 }
             }

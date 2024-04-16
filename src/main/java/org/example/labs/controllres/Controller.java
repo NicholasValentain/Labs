@@ -102,20 +102,19 @@ public class Controller {
 
                     if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
                         Workerth.isActive = true;
-                        String monitor = Workerth.monitor;
-                        synchronized (monitor) {
-                            monitor.notify();
+                        //WorkerAntAI.getInstance().notify();
+                        synchronized (Workerth){
+                            Workerth.notify();
                         }
                     }
 
                     if (btnStopWarriorAI.getText().equals("Солдат: ON")) {
                         Warriorth.isActive = true;
-                        String monitor = Warriorth.monitor;
-                        synchronized (monitor) {
-                            monitor.notify();
+                        //WarriorAntAI.getInstance().notify();
+                        synchronized (Warriorth){
+                            Warriorth.notify();
                         }
                     }
-
 
                     antSimulation.startSimulation();
                 }
@@ -138,9 +137,16 @@ public class Controller {
                         cbShowInfo.setDisable(false);
                     }
 
-                    WorkerAntAI.getInstance().isActive = false;
-                    WarriorAntAI.getInstance().isActive = false;
-
+                    WorkerAntAI Workerth = WorkerAntAI.getInstance();
+                    WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+                    Workerth.isActive = false;
+                    synchronized (Workerth){
+                        Workerth.notify();
+                    }
+                    Warriorth.isActive = false;
+                    synchronized (Warriorth){
+                        Warriorth.notify();
+                    }
                     antSimulation.stopSimulation();
                 }
                 break;
@@ -319,15 +325,17 @@ public class Controller {
 
     @FXML
     private void controlWorkerAI(){
-        String monitor = WorkerAntAI.getInstance().monitor;
+
+        WorkerAntAI Workerth = WorkerAntAI.getInstance();
+
         if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
-            WorkerAntAI.getInstance().isActive = false;
+            Workerth.isActive = false;
             btnStopWorkerAI.setText("Рабочих: OFF");
         }
         else {
-            WorkerAntAI.getInstance().isActive = true;
-            synchronized (monitor) {
-                monitor.notify();
+            Workerth.isActive = true;
+            synchronized (Workerth){
+                Workerth.notify();
             }
             btnStopWorkerAI.setText("Рабочих: ON");
         }
@@ -335,15 +343,15 @@ public class Controller {
 
     @FXML
     private void controlWarriorAI(){
-        String monitor = WarriorAntAI.getInstance().monitor;
+        WarriorAntAI Warriorth = WarriorAntAI.getInstance();
         if (btnStopWarriorAI.getText().equals("Солдат: ON")) {
-            WarriorAntAI.getInstance().isActive = false;
+            Warriorth.isActive = false;
             btnStopWarriorAI.setText("Солдат: OFF");
         }
         else {
-            WarriorAntAI.getInstance().isActive = true;
-            synchronized (monitor) {
-                monitor.notify();
+            Warriorth.isActive = true;
+            synchronized (Warriorth){
+                Warriorth.notify();
             }
             btnStopWarriorAI.setText("Солдат: ON");
         }

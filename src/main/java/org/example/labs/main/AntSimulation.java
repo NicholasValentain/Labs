@@ -1,6 +1,5 @@
 package org.example.labs.main;
 
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,13 +15,12 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import java.io.IOException;
+
 import org.example.labs.model.Habitat;
 import org.example.labs.controllres.Controller;
-
 import org.example.labs.model.WarriorAntAI;
 import org.example.labs.model.WorkerAntAI;
-
-import java.io.IOException;
 
 public class AntSimulation extends Application {
     private long simulationStartTime; // Время начала симуляции
@@ -38,15 +36,11 @@ public class AntSimulation extends Application {
     private long waitTime = 0;
     private long currentTime = 0;
     private long simulationTime = 0;
-    // Геттер для переменной timerVisible
+
     public boolean isTimerVisible() {
         return timerVisible;
-    }
-
-    // Метод для установки переменной timerVisible
-    public void setTimerVisible(boolean visible) {
-        this.timerVisible = visible;
-    }
+    } // Геттер для переменной timerVisible
+    public void setTimerVisible(boolean visible) { this.timerVisible = visible; } // Метод для установки переменной timerVisible
     public static void main(String[] args) {
         launch(args);
     }
@@ -94,7 +88,6 @@ public class AntSimulation extends Application {
         controller.setHabitat(habitat, this);
 
         habitat.setController(controller);
-
         FXMLstackPane.getChildren().add(buttonNode);
         root.getChildren().add(FXMLstackPane);
 
@@ -118,8 +111,28 @@ public class AntSimulation extends Application {
                         controller.L2.setDisable(true);
                         controller.P1.setDisable(true);
                         controller.P2.setDisable(true);
+                        controller.WorkerPriority.setDisable(true);
+                        controller.WarriorPriority.setDisable(true);
                         controller.cbShowInfo.setDisable(true);
                         controller.checkError();
+
+                        WorkerAntAI Workerth = WorkerAntAI.getInstance();
+                        WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+                        if (controller.btnStopWorkerAI.getText().equals("Рабочих: ON")) {
+                            Workerth.isActive = true;
+                            //WorkerAntAI.getInstance().notify();
+                            synchronized (Workerth){
+                                Workerth.notify();
+                            }
+                        }
+                        if (controller.btnStopWarriorAI.getText().equals("Солдат: ON")) {
+                            Warriorth.isActive = true;
+                            //WarriorAntAI.getInstance().notify();
+                            synchronized (Warriorth){
+                                Warriorth.notify();
+                            }
+                        }
+
                         startSimulation();
                     }
                     break;
@@ -129,13 +142,30 @@ public class AntSimulation extends Application {
                             controller.btnStart.setDisable(true);
                             controller.btnStop.setDisable(true);
                         }
-                        controller.N1.setDisable(false);
-                        controller.N2.setDisable(false);
-                        controller.L1.setDisable(false);
-                        controller.L2.setDisable(false);
-                        controller.P1.setDisable(false);
-                        controller.P2.setDisable(false);
-                        controller.cbShowInfo.setDisable(false);
+                        if(!controller.cbShowInfo.isSelected()) {
+                            controller.N1.setDisable(false);
+                            controller.N2.setDisable(false);
+                            controller.L1.setDisable(false);
+                            controller.L2.setDisable(false);
+                            controller.P1.setDisable(false);
+                            controller.P2.setDisable(false);
+                            controller.WorkerPriority.setDisable(false);
+                            controller.WarriorPriority.setDisable(false);
+                            controller.cbShowInfo.setDisable(false);
+                        }
+
+                        WorkerAntAI Workerth = WorkerAntAI.getInstance();
+                        WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+                        Workerth.isActive = false;
+                        synchronized (Workerth){
+                            Workerth.notify();
+                        }
+                        Warriorth.isActive = false;
+                        synchronized (Warriorth){
+                            Warriorth.notify();
+                        }
+
+
                         stopSimulation();
                     }
                     break;

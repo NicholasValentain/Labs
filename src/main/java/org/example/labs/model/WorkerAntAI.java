@@ -26,58 +26,48 @@ public class WorkerAntAI extends BaseAI {
         super(name);
         this.habitat = habitat;
         speed = 0.15;
-        monitor = "monitor wor";
     }
 
     public void run() {
         Vector<Ant> ants = habitat.ants;
         while (true) {
-            synchronized (monitor) {
-                if (!isActive) {
-                    try {
-                        monitor.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                synchronized (ants) {
-                    for (int i = 0; i < ants.size() && isActive; i++) {
-                        System.out.println(WorkerAntAI.getInstance().getPriority());
-                        Ant ant = ants.get(i);
-                        // Каждый поток работает только со своим типом объекта
-                        if (ant instanceof WorkerAnt) {
-                            if (ant.getImageView().getTranslateX() < 1 && ant.getImageView().getTranslateY() < 1) {
-                                ant.stayInZero = true;
-                            }
-                            if (ant.getImageView().getTranslateX() >= ant.posX
-                                    && ant.getImageView().getTranslateY() >= ant.posY) {
-                                ant.stayInZero = false;
-                            }
-                            if (!ant.stayInZero) {
-                                double deltaX = 0 - ant.getImageView().getTranslateX();
-                                double deltaY = 0 - ant.getImageView().getTranslateY();
-                                double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                                double moveX = deltaX / (distance * speed);
-                                double moveY = deltaY / (distance * speed);
+            synchronized (ants) {
+                for (int i = 0; i < ants.size() && isActive; i++) {
+                    System.out.println(WorkerAntAI.getInstance().getPriority());
+                    Ant ant = ants.get(i);
+                    // Каждый поток работает только со своим типом объекта
+                    if (ant instanceof WorkerAnt) {
+                        if (ant.getImageView().getTranslateX() < 1 && ant.getImageView().getTranslateY() < 1) {
+                            ant.stayInZero = true;
+                        }
+                        if (ant.getImageView().getTranslateX() >= ant.posX
+                                && ant.getImageView().getTranslateY() >= ant.posY) {
+                            ant.stayInZero = false;
+                        }
+                        if (!ant.stayInZero) {
+                            double deltaX = 0 - ant.getImageView().getTranslateX();
+                            double deltaY = 0 - ant.getImageView().getTranslateY();
+                            double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                            double moveX = deltaX / (distance * speed);
+                            double moveY = deltaY / (distance * speed);
 
-                                Platform.runLater(() -> {
-                                    ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
-                                    ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
-                                });
+                            Platform.runLater(() -> {
+                                ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
+                                ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
+                            });
 
-                            } else {
-                                double deltaX = ant.posX - ant.getImageView().getTranslateX();
-                                double deltaY = ant.posY - ant.getImageView().getTranslateY();
-                                double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                                double moveX = deltaX / (distance * speed);
-                                double moveY = deltaY / (distance * speed);
+                        } else {
+                            double deltaX = ant.posX - ant.getImageView().getTranslateX();
+                            double deltaY = ant.posY - ant.getImageView().getTranslateY();
+                            double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                            double moveX = deltaX / (distance * speed);
+                            double moveY = deltaY / (distance * speed);
 
-                                Platform.runLater(() -> {
-                                    ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
-                                    ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
-                                });
+                            Platform.runLater(() -> {
+                                ant.getImageView().setTranslateX(ant.getImageView().getTranslateX() + moveX);
+                                ant.getImageView().setTranslateY(ant.getImageView().getTranslateY() + moveY);
+                            });
 
-                            }
                         }
                     }
                 }

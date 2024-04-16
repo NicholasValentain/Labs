@@ -228,17 +228,15 @@ public class Habitat {
             WarriorAntAI Warriorth = WarriorAntAI.getInstance();
             if (controller.btnStopWorkerAI.getText().equals("Рабочих: ON")) {
                 Workerth.isActive = true;
-                String monitor = Workerth.monitor;
-                synchronized (monitor) {
-                    monitor.notify();
+                synchronized (Workerth){
+                    Workerth.notify();
                 }
             }
 
             if (controller.btnStopWarriorAI.getText().equals("Солдат: ON")) {
                 Warriorth.isActive = true;
-                String monitor = Warriorth.monitor;
-                synchronized (monitor) {
-                    monitor.notify();
+                synchronized (Warriorth){
+                    Warriorth.notify();
                 }
             }
         }
