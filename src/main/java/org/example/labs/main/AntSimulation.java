@@ -87,9 +87,17 @@ public class AntSimulation extends Application {
         controller = loader.getController();
         controller.setHabitat(habitat, this);
 
+        WorkerAntAI.getInstance(habitat).start();
+        WarriorAntAI.getInstance(habitat).start();
+
+
+        //controller.setConfig();
+
         habitat.setController(controller);
         FXMLstackPane.getChildren().add(buttonNode);
         root.getChildren().add(FXMLstackPane);
+
+        //controller.getConfig();
 
         times = new Text("Время: 00:00:00"); // Текст для информации о времени
         times.setFont(Font.font("Arial Rounded MT", 24)); // устанавливаем шрифт Arial Rounded MT размером 20
@@ -97,7 +105,7 @@ public class AntSimulation extends Application {
         StackPane.setAlignment(times, Pos.TOP_LEFT);
         times.setTranslateX(1310); // Устанавливаем координату X
         times.setTranslateY(865); // Устанавливаем координату Y
-        root.getChildren().add(times);
+        //root.getChildren().add(times);
 
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -185,14 +193,15 @@ public class AntSimulation extends Application {
             }
         });
 
-
+        controller.getConfig();
         primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm())); // Добавление иконки
         primaryStage.setTitle("Ant Simulation"); // Установка названия программы
         primaryStage.setScene(scene);
-        primaryStage.setOnCloseRequest(t -> System.exit(0)); // Остановка приложения по нажатию крестика
+        primaryStage.setOnCloseRequest(event -> {
+            controller.setConfig();
+            System.exit(0);
+        }); // Остановка приложения по нажатию крестика
 
-        WorkerAntAI.getInstance(habitat).start();
-        WarriorAntAI.getInstance(habitat).start();
 
         primaryStage.show();
     }

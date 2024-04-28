@@ -41,7 +41,7 @@ public class WarriorAntAI extends BaseAI {
         while (true) {
             synchronized (ants) {
                 for (int i = 0; i < ants.size() && isActive; i++) {
-                    System.out.println(WarriorAntAI.getInstance().getPriority());
+                    //System.out.println(WarriorAntAI.getInstance().getPriority());
                     Ant ant = ants.get(i);
                     // Каждый поток работает только со своим типом объекта
                     if (ant instanceof WarriorAnt) {

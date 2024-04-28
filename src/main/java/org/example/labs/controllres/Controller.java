@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.labs.model.Habitat; // Импортируем класс Habitat
@@ -18,12 +19,13 @@ import org.example.labs.model.WarriorAntAI;
 import org.example.labs.model.WorkerAntAI;
 
 import java.io.IOException;
+import java.io.*;
 import java.util.TreeMap;
 
 
 public class Controller {
     @FXML
-    public Button btnStart, btnStop, btnList, btnStopWorkerAI, btnStopWarriorAI;
+    public Button btnStart, btnStop, btnList, btnStopWorkerAI, btnStopWarriorAI, btnConsole;
     @FXML
     public RadioButton ShowTime, HideTime;
     @FXML
@@ -56,7 +58,6 @@ public class Controller {
         L2.setText("1");
         ShowTime.setSelected(true);
         btnStop.setDisable(true);
-        // Установка списка элементов в ComboBox
         P1.setItems(options);
         P2.setItems(options);
         P1.setValue("100");
@@ -65,9 +66,88 @@ public class Controller {
         WarriorPriority.setItems(prioritys);
         WorkerPriority.setValue("5");
         WarriorPriority.setValue("5");
+    }
 
+    public void getConfig(){
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("config.txt"));
 
-        //tableView.setVisible(false);
+            WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+            WorkerAntAI Workerth = WorkerAntAI.getInstance();
+
+            N1.setText(reader.readLine());
+            N2.setText(reader.readLine());
+            L1.setText(reader.readLine());
+            L2.setText(reader.readLine());
+            ShowTime.setSelected(Boolean.parseBoolean(reader.readLine()));
+            HideTime.setSelected(Boolean.parseBoolean(reader.readLine()));
+            if(ShowTime.isSelected()) {
+                antSimulation.timerVisible = true;
+                antSimulation.root.getChildren().add(antSimulation.times);
+            }
+            else {
+                antSimulation.timerVisible = false;
+                antSimulation.root.getChildren().remove(antSimulation.times);
+            }
+            cbShowInfo.setSelected(Boolean.parseBoolean(reader.readLine()));
+            P1.setValue(reader.readLine());
+            P2.setValue(reader.readLine());
+            WorkerPriority.setValue(reader.readLine());
+            WarriorPriority.setValue(reader.readLine());
+            Workerth.isActive = Boolean.parseBoolean(reader.readLine());
+            Warriorth.isActive = Boolean.parseBoolean(reader.readLine());
+
+            if(Workerth.isActive) {
+                btnStopWorkerAI.setText("Рабочих: ON");
+                synchronized (Workerth){
+                    Workerth.notify();
+                }
+            }
+            else {
+                btnStopWorkerAI.setText("Рабочих: OFF");
+            }
+
+            if(Warriorth.isActive) {
+                btnStopWarriorAI.setText("Солдат: ON");
+                synchronized (Warriorth){
+                    Warriorth.notify();
+                }
+            }
+            else {
+                btnStopWarriorAI.setText("Солдат: OFF");
+            }
+
+            reader.close();
+        } catch (IOException e) {
+            System.err.println("Ошибка при записи в файл: " + e.getMessage());
+        }
+    }
+
+    public void setConfig(){
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("config.txt"));
+
+            WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+            WorkerAntAI Workerth = WorkerAntAI.getInstance();
+
+            writer.write(N1.getText() + '\n');
+            writer.write(N2.getText() + '\n');
+            writer.write(L1.getText() + '\n');
+            writer.write(L2.getText() + '\n');
+            writer.write(String.valueOf(ShowTime.isSelected()) + '\n');
+            writer.write(String.valueOf(HideTime.isSelected()) + '\n');
+            writer.write(String.valueOf(cbShowInfo.isSelected()) + '\n');
+            writer.write(String.valueOf(P1.getValue()) + '\n');
+            writer.write(String.valueOf(P2.getValue()) + '\n');
+            writer.write(String.valueOf(WorkerPriority.getValue()) + '\n');
+            writer.write(String.valueOf(WarriorPriority.getValue()) + '\n');
+            writer.write(String.valueOf(Workerth.isActive) + '\n');
+            writer.write(String.valueOf(Warriorth.isActive) + '\n');
+            System.out.println(Workerth.isActive + " " + Warriorth.isActive);
+            writer.close();
+        } catch (IOException e) {
+            System.err.println("Ошибка при записи в файл: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -75,83 +155,83 @@ public class Controller {
         Button clickedButton = (Button) event.getSource();
         switch (clickedButton.getId()) {
             case "btnStart":
-                if (habitat != null && !antSimulation.startFlag && checkError()) {
-                    btnStart.setDisable(true);
-                    btnStop.setDisable(false);
-
-                    N1.setDisable(true);
-                    N2.setDisable(true);
-                    L1.setDisable(true);
-                    L2.setDisable(true);
-                    P1.setDisable(true);
-                    P2.setDisable(true);
-                    WorkerPriority.setDisable(true);
-                    WarriorPriority.setDisable(true);
-                    cbShowInfo.setDisable(true);
-
-
-
-                    //WorkerAntAI.getInstance().isActive = true;
-                    //WorkerAntAI.getInstance().monitor.notify();
-                    //WarriorAntAI.getInstance().isActive = true;
-                   //WarriorAntAI.getInstance().monitor.notify();
-
-                    WorkerAntAI Workerth = WorkerAntAI.getInstance();
-                    WarriorAntAI Warriorth = WarriorAntAI.getInstance();
-
-
-                    if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
-                        Workerth.isActive = true;
-                        //WorkerAntAI.getInstance().notify();
-                        synchronized (Workerth){
-                            Workerth.notify();
-                        }
-                    }
-
-                    if (btnStopWarriorAI.getText().equals("Солдат: ON")) {
-                        Warriorth.isActive = true;
-                        //WarriorAntAI.getInstance().notify();
-                        synchronized (Warriorth){
-                            Warriorth.notify();
-                        }
-                    }
-
-                    antSimulation.startSimulation();
-                }
+                start();
                 break;
             case "btnStop":
-                if (habitat != null && antSimulation.startFlag) {
-                    if(cbShowInfo.isSelected()) {
-                        btnStart.setDisable(true);
-                        btnStop.setDisable(true);
-                    }
-                    if(!cbShowInfo.isSelected()) {
-                        N1.setDisable(false);
-                        N2.setDisable(false);
-                        L1.setDisable(false);
-                        L2.setDisable(false);
-                        P1.setDisable(false);
-                        P2.setDisable(false);
-                        WorkerPriority.setDisable(false);
-                        WarriorPriority.setDisable(false);
-                        cbShowInfo.setDisable(false);
-                    }
-
-                    WorkerAntAI Workerth = WorkerAntAI.getInstance();
-                    WarriorAntAI Warriorth = WarriorAntAI.getInstance();
-                    Workerth.isActive = false;
-                    synchronized (Workerth){
-                        Workerth.notify();
-                    }
-                    Warriorth.isActive = false;
-                    synchronized (Warriorth){
-                        Warriorth.notify();
-                    }
-                    antSimulation.stopSimulation();
-                }
+                stop();
                 break;
         }
     }
+
+    public void start() {
+        if (habitat != null && !antSimulation.startFlag && checkError()) {
+            btnStart.setDisable(true);
+            btnStop.setDisable(false);
+
+            N1.setDisable(true);
+            N2.setDisable(true);
+            L1.setDisable(true);
+            L2.setDisable(true);
+            P1.setDisable(true);
+            P2.setDisable(true);
+            WorkerPriority.setDisable(true);
+            WarriorPriority.setDisable(true);
+            cbShowInfo.setDisable(true);
+//            WorkerAntAI Workerth = WorkerAntAI.getInstance();
+//            WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+//
+//            if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
+//                Workerth.isActive = true;
+//                //WorkerAntAI.getInstance().notify();
+//                synchronized (Workerth){
+//                    Workerth.notify();
+//                }
+//            }
+//
+//            if (btnStopWarriorAI.getText().equals("Солдат: ON")) {
+//                Warriorth.isActive = true;
+//                //WarriorAntAI.getInstance().notify();
+//                synchronized (Warriorth){
+//                    Warriorth.notify();
+//                }
+//            }
+
+            antSimulation.startSimulation();
+        }
+    }
+
+    public void stop() {
+        if (habitat != null && antSimulation.startFlag) {
+            if(cbShowInfo.isSelected()) {
+                btnStart.setDisable(true);
+                btnStop.setDisable(true);
+            }
+            if(!cbShowInfo.isSelected()) {
+                N1.setDisable(false);
+                N2.setDisable(false);
+                L1.setDisable(false);
+                L2.setDisable(false);
+                P1.setDisable(false);
+                P2.setDisable(false);
+                WorkerPriority.setDisable(false);
+                WarriorPriority.setDisable(false);
+                cbShowInfo.setDisable(false);
+            }
+
+//            WorkerAntAI Workerth = WorkerAntAI.getInstance();
+//            WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+//            Workerth.isActive = false;
+//            synchronized (Workerth){
+//                Workerth.notify();
+//            }
+//            Warriorth.isActive = false;
+//            synchronized (Warriorth){
+//                Warriorth.notify();
+//            }
+            antSimulation.stopSimulation();
+        }
+    }
+
     @FXML
     private void clickTimeSwitch() {
         if (ShowTime.isSelected() && !antSimulation.timerVisible) {
@@ -223,40 +303,14 @@ public class Controller {
         MenuItem menuItem = (MenuItem) event.getSource();
         switch (menuItem.getText()) {
             case "Выход":
+                setConfig();
                 System.exit(0);
                 break;
             case "Старт (B)":
-                if (habitat != null && !antSimulation.startFlag) {
-                    btnStart.setDisable(true);
-                    btnStop.setDisable(false);
-
-                    N1.setDisable(true);
-                    N2.setDisable(true);
-                    L1.setDisable(true);
-                    L2.setDisable(true);
-                    P1.setDisable(true);
-                    P2.setDisable(true);
-                    cbShowInfo.setDisable(true);
-                    checkError();
-                    antSimulation.startSimulation();
-                }
+                start();
                 break;
             case "Стоп (E)":
-                if (habitat != null && antSimulation.startFlag) {
-                    if(cbShowInfo.isSelected()) {
-                        btnStart.setDisable(true);
-                        btnStop.setDisable(true);
-                    }
-
-                    N1.setDisable(false);
-                    N2.setDisable(false);
-                    L1.setDisable(false);
-                    L2.setDisable(false);
-                    P1.setDisable(false);
-                    P2.setDisable(false);
-                    cbShowInfo.setDisable(false);
-                    antSimulation.stopSimulation();
-                }
+                stop();
                 break;
         }
     }
@@ -317,6 +371,27 @@ public class Controller {
             stage.setTitle("Текущие объекты");
             stage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/table.png").toExternalForm()));
             stage.setScene(new Scene(root));
+            stage.showAndWait(); // Показываем окно и ждем, пока его закроют
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void openConsole() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/labs/console.fxml"));
+            Pane root = fxmlLoader.load();
+            //root.setBackground(Background.fill(Color.BLACK));
+            ConsoleController consoleController = fxmlLoader.getController();
+            consoleController.setCommands(this, this.antSimulation); // Устанавливаем TreeMap
+
+            Stage stage = new Stage();
+            //stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Console");
+            stage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_console.png").toExternalForm()));
+            Scene consoleScene = new Scene(root, 1100, 600);
+            stage.setScene(consoleScene);
             stage.showAndWait(); // Показываем окно и ждем, пока его закроют
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.TextArea?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.labs.controllres.ConsoleController">
+    <TextArea fx:id="textArea" prefWidth="1100" prefHeight="600" style="-fx-background-color: rgb(0,0,0); -fx-control-inner-background: black; -fx-font-size: 24px; -fx-text-fill: green;" />
+</VBox>

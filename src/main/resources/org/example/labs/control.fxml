@@ -51,6 +51,7 @@
                 <Button fx:id="btnStart" text="СТАРТ (B)" style="-fx-font-size: 20px; -fx-font-weight: bold;" onAction="#click" layoutX="1230" layoutY="10" prefWidth="160" prefHeight="30"/>
                 <Button fx:id="btnStop" text="СТОП (E)" style="-fx-font-size: 20px; -fx-font-weight: bold;" onAction="#click" layoutX="1410" layoutY="10" prefWidth="160" prefHeight="30"/>
                 <Button fx:id="btnList" text="Текущие объекты" style="-fx-font-size: 24px; -fx-font-weight: bold;" onAction="#openDialog" layoutX="1240" layoutY="790" prefWidth="320" prefHeight="30"/>
+                <Button fx:id="btnConsole" text="Console" style="-fx-font-size: 24px; -fx-font-weight: bold;" onAction="#openConsole" layoutX="10" layoutY="810" prefWidth="160" prefHeight="30"/>
 
                 <Label layoutX="1225" layoutY="580" text="Движение" >
                     <font>

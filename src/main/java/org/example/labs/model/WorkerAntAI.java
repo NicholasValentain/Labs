@@ -33,7 +33,7 @@ public class WorkerAntAI extends BaseAI {
         while (true) {
             synchronized (ants) {
                 for (int i = 0; i < ants.size() && isActive; i++) {
-                    System.out.println(WorkerAntAI.getInstance().getPriority());
+                    //System.out.println(WorkerAntAI.getInstance().getPriority());
                     Ant ant = ants.get(i);
                     // Каждый поток работает только со своим типом объекта
                     if (ant instanceof WorkerAnt) {
