@@ -11,6 +11,8 @@ abstract class Ant implements IBehaviour {
     public double posY;
     public boolean stayInZero = false;
 
+    int ID;
+
     public Ant(String imagePath, long birthTime, long  lifeTime) {
         Image image = new Image(getClass().getResourceAsStream(imagePath)); // Изображение объекта
         this.birthTime = birthTime;
@@ -23,11 +25,20 @@ abstract class Ant implements IBehaviour {
     public ImageView getImageView() {
         return imageView;
     }
+
+    public abstract void createImageView(double x, double y);
     public long getBirthTime() {
         return birthTime;
     }
 
     public long getLifeTime() {
         return lifeTime;
+    }
+
+    public double getX(){return posX;}
+    public double getY(){return posY;}
+
+    public int getID(){
+        return ID;
     }
 }

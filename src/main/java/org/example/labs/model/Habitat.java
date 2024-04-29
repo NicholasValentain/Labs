@@ -31,15 +31,19 @@ public class Habitat {
     public TreeMap<Integer, Long> spawnTimes;
     int ID;
 
-
+    public Timer timer;
+    private Habitat() {
+        timer = new Timer();
+    }
 
     private long simulationStartTime = 0; // Время начала симуляции
+    public int updateTimer;
     private Label statisticsLabel; // Label для вывода статистики
     private Rectangle statisticsRectangle; // Rectangle для вывода статистики
     public boolean moreInfo;
     public volatile boolean paused = false;
     public  volatile  boolean isExit = false;
-    private boolean startFlag; // Флаг для проверки работы симуляции
+    public boolean startFlag; // Флаг для проверки работы симуляции
     public int N1; // Интервал для рабочих муравьев (в секундах)
     public double P1; // Вероятность для рабочих муравьев
     public int N2; // интервал для муравьев-воинов (в секундах)
@@ -54,7 +58,7 @@ public class Habitat {
     long lastWorkerTime;
     long lastWarriorTime;
 
-    private Controller controller;
+    public Controller controller;
 
     public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
@@ -69,12 +73,31 @@ public class Habitat {
         this.statisticsLabel = new Label();
         this.statisticsRectangle = new Rectangle();
     }
+
+    public Vector<Ant> getObjCollection() {
+        return this.ants;
+    }
+    public HashSet<Integer> getBornCollection() {return identifiers;}
+    public TreeMap<Integer, Long> getIdCollection() {return spawnTimes;}
+
     // Статический метод для получения единственного экземпляра класса
     public static Habitat getInstance(StackPane root, StackPane AntList) {
         if (instance == null) {
             instance = new Habitat(root, AntList);
         }
         return instance;
+    }
+
+    public static Habitat getInstance() {
+        return instance;
+    }
+
+    public long getTimer(){
+        return simulationTimes;
+    }
+
+    public int getID(){
+        return ID;
     }
 
     public void setController(Controller controller) {
@@ -241,6 +264,17 @@ public class Habitat {
             }
         }
     }
+
+    public void updateTimer(){
+        long simulationTime = simulationTimes;
+        String simulationTimeString;
+        long hours = simulationTime / 3600;
+        long minutes = (simulationTime % 3600) / 60;
+        long seconds = simulationTime % 60;
+        //simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours, minutes, seconds);
+    }
+
+
 
     private void clearDeadAnt(long currentTime) {
         List<AtomicReference<Ant>> foundedFishList = new ArrayList<>();

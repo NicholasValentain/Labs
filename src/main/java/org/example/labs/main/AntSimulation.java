@@ -228,6 +228,8 @@ public class AntSimulation extends Application {
         timer.start();
     }
 
+
+
     // Метод для остановки таймера
     private void stopTimer() {
         if (timer != null) {

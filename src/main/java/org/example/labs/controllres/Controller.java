@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.labs.model.Habitat; // Импортируем класс Habitat
@@ -34,6 +35,12 @@ public class Controller {
     public TextField N1, N2, L1, L2;
     @FXML
     public ComboBox P1, P2, WorkerPriority, WarriorPriority;
+    @FXML
+    private StackPane modalStackPane;
+
+    public StackPane getStackPane() {
+        return modalStackPane;
+    }
 
     //@FXML
     //public TableView<Map.Entry<Integer, Long>> tableView;
