@@ -4,10 +4,12 @@ import javafx.application.Platform;
 import java.util.Vector;
 
 public class WorkerAntAI extends BaseAI {
+
     public static Habitat habitat;
     public double speed;
 
     private static WorkerAntAI instance;
+
     public static WorkerAntAI getInstance(Habitat habitat) {
         if (instance == null) {
             instance = new WorkerAntAI(habitat, "AI Physical");
@@ -33,7 +35,7 @@ public class WorkerAntAI extends BaseAI {
         while (true) {
             synchronized (ants) {
                 for (int i = 0; i < ants.size() && isActive; i++) {
-                    //System.out.println(WorkerAntAI.getInstance().getPriority());
+                    // System.out.println(WorkerAntAI.getInstance().getPriority());
                     Ant ant = ants.get(i);
                     // Каждый поток работает только со своим типом объекта
                     if (ant instanceof WorkerAnt) {
@@ -79,4 +81,5 @@ public class WorkerAntAI extends BaseAI {
             }
         }
     }
+
 }

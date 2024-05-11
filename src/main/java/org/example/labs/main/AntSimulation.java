@@ -16,14 +16,18 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.example.labs.model.Habitat;
+import org.example.labs.model.Serialization;
 import org.example.labs.controllres.Controller;
 import org.example.labs.model.WarriorAntAI;
 import org.example.labs.model.WorkerAntAI;
 
-public class AntSimulation extends Application {
-    private long simulationStartTime; // Время начала симуляции
+public class AntSimulation extends Application implements Serializable {
+    private static final long serialVersionUID = 1L; // Пример значения serialVersionUID
+    private static AntSimulation instance; // Статическое поле для хранения единственного экземпляра
+    public long simulationStartTime; // Время начала симуляции
     public boolean startFlag = false; // Флаг для проверки работы симуляции
     public Text times; // Текст для информации о времени
     public boolean timerVisible = true; // Флаг видимости таймера
@@ -31,18 +35,28 @@ public class AntSimulation extends Application {
     public StackPane root;
     private Habitat habitat;
     private Controller controller;
-    private Text descriptionText;
+    public Text descriptionText;
     private AnimationTimer timer;
-    private long waitTime = 0;
-    private long currentTime = 0;
-    private long simulationTime = 0;
+    public long waitTime = 0;
+    public long currentTime = 0;
+    public long simulationTime = 0;
+    private boolean firstStart = false;
 
     public boolean isTimerVisible() {
         return timerVisible;
     } // Геттер для переменной timerVisible
-    public void setTimerVisible(boolean visible) { this.timerVisible = visible; } // Метод для установки переменной timerVisible
+
+    public void setTimerVisible(boolean visible) {
+        this.timerVisible = visible;
+    } // Метод для установки переменной timerVisible
+
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static AntSimulation getInstance() {
+
+        return instance;
     }
 
     @Override
@@ -62,7 +76,7 @@ public class AntSimulation extends Application {
         StackPane.setAlignment(descriptionText, Pos.TOP_LEFT); // Отменяем центрирование
         descriptionText.setTranslateX(110); // Устанавливаем координату X
         descriptionText.setTranslateY(420); // Устанавливаем координату Y
-        Color customColor = Color.rgb(215,125,49); // Создаем свой собственный цвет
+        Color customColor = Color.rgb(215, 125, 49); // Создаем свой собственный цвет
         descriptionText.setFill(customColor); // Устанавливаем цвет текста на наш
         descriptionText.setStroke(Color.BLACK); // Устанавливаем чёрный контур
         descriptionText.setStrokeWidth(2.0); // Устанавливаем толщину обводки
@@ -71,12 +85,12 @@ public class AntSimulation extends Application {
 
         Scene scene = new Scene(root, 1600, 900); // Основное окно
 
-        Rectangle rectangleManagement = new Rectangle(400,900,Color.WHITE); // Окно для кнопок
+        Rectangle rectangleManagement = new Rectangle(400, 900, Color.WHITE); // Окно для кнопок
         StackPane.setAlignment(rectangleManagement, Pos.TOP_LEFT); // Отменяем центрирование
         rectangleManagement.setTranslateX(1200); // Устанавливаем координату X
         rectangleManagement.setTranslateY(0); // Устанавливаем координату Y
         rectangleManagement.setFill(Color.GRAY);// Устанавливаем цвет заливки прямоугольника
-        rectangleManagement.setStroke(Color.BLACK);  // Установка цвета обводки
+        rectangleManagement.setStroke(Color.BLACK); // Установка цвета обводки
         rectangleManagement.setStrokeWidth(5); // Установка ширины обводки
         rectangleManagement.setStrokeType(StrokeType.INSIDE); // Установка типа обводки внутри
         root.getChildren().add(rectangleManagement);// Добавляем прямоугольник на сцену
@@ -90,14 +104,13 @@ public class AntSimulation extends Application {
         WorkerAntAI.getInstance(habitat).start();
         WarriorAntAI.getInstance(habitat).start();
 
-
-        //controller.setConfig();
+        // controller.setConfig();
 
         habitat.setController(controller);
         FXMLstackPane.getChildren().add(buttonNode);
         root.getChildren().add(FXMLstackPane);
 
-        //controller.getConfig();
+        // controller.getConfig();
 
         times = new Text("Время: 00:00:00"); // Текст для информации о времени
         times.setFont(Font.font("Arial Rounded MT", 24)); // устанавливаем шрифт Arial Rounded MT размером 20
@@ -105,12 +118,15 @@ public class AntSimulation extends Application {
         StackPane.setAlignment(times, Pos.TOP_LEFT);
         times.setTranslateX(1310); // Устанавливаем координату X
         times.setTranslateY(865); // Устанавливаем координату Y
-        //root.getChildren().add(times);
+        // root.getChildren().add(times);
 
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
+                case KeyCode.R:
+                    controller.resume();
+                    break;
                 case KeyCode.B:
-                    if(!startFlag) {
+                    if (!startFlag) {
                         controller.btnStart.setDisable(true);
                         controller.btnStop.setDisable(false);
                         controller.N1.setDisable(true);
@@ -128,15 +144,15 @@ public class AntSimulation extends Application {
                         WarriorAntAI Warriorth = WarriorAntAI.getInstance();
                         if (controller.btnStopWorkerAI.getText().equals("Рабочих: ON")) {
                             Workerth.isActive = true;
-                            //WorkerAntAI.getInstance().notify();
-                            synchronized (Workerth){
+                            // WorkerAntAI.getInstance().notify();
+                            synchronized (Workerth) {
                                 Workerth.notify();
                             }
                         }
                         if (controller.btnStopWarriorAI.getText().equals("Солдат: ON")) {
                             Warriorth.isActive = true;
-                            //WarriorAntAI.getInstance().notify();
-                            synchronized (Warriorth){
+                            // WarriorAntAI.getInstance().notify();
+                            synchronized (Warriorth) {
                                 Warriorth.notify();
                             }
                         }
@@ -145,12 +161,12 @@ public class AntSimulation extends Application {
                     }
                     break;
                 case KeyCode.E:
-                    if(startFlag) {
-                        if(controller.cbShowInfo.isSelected()) {
+                    if (startFlag) {
+                        if (controller.cbShowInfo.isSelected()) {
                             controller.btnStart.setDisable(true);
                             controller.btnStop.setDisable(true);
                         }
-                        if(!controller.cbShowInfo.isSelected()) {
+                        if (!controller.cbShowInfo.isSelected()) {
                             controller.N1.setDisable(false);
                             controller.N2.setDisable(false);
                             controller.L1.setDisable(false);
@@ -165,14 +181,13 @@ public class AntSimulation extends Application {
                         WorkerAntAI Workerth = WorkerAntAI.getInstance();
                         WarriorAntAI Warriorth = WarriorAntAI.getInstance();
                         Workerth.isActive = false;
-                        synchronized (Workerth){
+                        synchronized (Workerth) {
                             Workerth.notify();
                         }
                         Warriorth.isActive = false;
-                        synchronized (Warriorth){
+                        synchronized (Warriorth) {
                             Warriorth.notify();
                         }
-
 
                         stopSimulation();
                     }
@@ -190,11 +205,16 @@ public class AntSimulation extends Application {
                         timerVisible = true;
                     }
                     break;
+                case KeyCode.BACK_QUOTE:
+                    controller.openConsole();
+                    break;
             }
         });
 
         controller.getConfig();
-        primaryStage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm())); // Добавление иконки
+        primaryStage.getIcons()
+                .add(new Image(getClass().getResource("/org/example/labs/icon/icon_ant.png").toExternalForm())); // Добавление
+                                                                                                                 // иконки
         primaryStage.setTitle("Ant Simulation"); // Установка названия программы
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest(event -> {
@@ -202,19 +222,19 @@ public class AntSimulation extends Application {
             System.exit(0);
         }); // Остановка приложения по нажатию крестика
 
-
         primaryStage.show();
     }
 
-
     // Метод для запуска таймера обновления времени
     private void startTimer() {
+        //System.out.println(simulationStartTime + " " + simulationTime + " " + waitTime);
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (!habitat.paused) {
                     currentTime = System.currentTimeMillis();
                     simulationTime = ((currentTime - simulationStartTime) / 1000) - waitTime;
+                    //System.out.println(simulationStartTime + " " + simulationTime + " " + waitTime+ " " + currentTime);
                     long hours = simulationTime / 3600;
                     long minutes = (simulationTime % 3600) / 60;
                     long seconds = simulationTime % 60;
@@ -228,33 +248,44 @@ public class AntSimulation extends Application {
         timer.start();
     }
 
-
+    public long plusTime = 0;
 
     // Метод для остановки таймера
-    private void stopTimer() {
-        if (timer != null) {
-            timer.stop();
-            simulationStartTime = System.currentTimeMillis(); // Сброс начального времени симуляции до исходного значения
+    public void resumeTimer() {
+        startFlag = true;
+        if (!firstStart) {
+            firstStart = true;
             times.setText("Время: 00:00:00");// Сброс текста отображаемого времени
-            waitTime = 0;
+            // waitTime = 0;
+            simulationStartTime = System.currentTimeMillis();
+            if (plusTime > 0) {
+                simulationStartTime -= plusTime * 1000;
+                //plusTime = 0;
+            }
         }
+        habitat.resumeSimulation();
+        startTimer();
     }
 
     public void startSimulation() {
+        times.setText("Время: 00:00:00");// Сброс текста отображаемого времени
+        waitTime = 0;
         startFlag = true;
         root.getChildren().remove(descriptionText);
         simulationStartTime = System.currentTimeMillis();
         habitat.startSimulation();
         startTimer(); // Запускаем таймер
     }
+
     public void stopSimulation() {
         habitat.stopSimulation();
-        if(habitat.isExit) {
+        if (habitat.isExit) {
             controller.btnStop.setDisable(true);
             controller.btnStart.setDisable(false);
+            controller.btnResume.setDisable(false);
             startFlag = false;
-            stopTimer();
-        }
-        else controller.btnStop.setDisable(false);
+        } else
+            controller.btnStop.setDisable(false);
     }
+
 }

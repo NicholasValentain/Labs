@@ -3,8 +3,8 @@ package org.example.labs.model;
 import java.util.Vector;
 import javafx.application.Platform;
 
-
 public class WarriorAntAI extends BaseAI {
+
     private double centerX; // X-координата центра окружности
     private double centerY; // Y-координата центра окружности
     private double radius; // Радиус окружности
@@ -12,18 +12,21 @@ public class WarriorAntAI extends BaseAI {
     public static Habitat habitat;
 
     private static WarriorAntAI instance;
+
     public static WarriorAntAI getInstance(Habitat habitat) {
         if (instance == null) {
             instance = new WarriorAntAI(habitat, "AI Physical");
         }
         return instance;
     }
+
     public static WarriorAntAI getInstance() {
         if (instance == null) {
             instance = new WarriorAntAI(habitat, "AI Physical");
         }
         return instance;
     }
+
     public WarriorAntAI(Habitat habitat, String name) {
         super(name);
         this.habitat = habitat;
@@ -41,7 +44,7 @@ public class WarriorAntAI extends BaseAI {
         while (true) {
             synchronized (ants) {
                 for (int i = 0; i < ants.size() && isActive; i++) {
-                    //System.out.println(WarriorAntAI.getInstance().getPriority());
+                    // System.out.println(WarriorAntAI.getInstance().getPriority());
                     Ant ant = ants.get(i);
                     // Каждый поток работает только со своим типом объекта
                     if (ant instanceof WarriorAnt) {
@@ -69,4 +72,5 @@ public class WarriorAntAI extends BaseAI {
             }
         }
     }
+
 }

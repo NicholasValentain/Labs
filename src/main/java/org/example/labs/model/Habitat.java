@@ -1,5 +1,6 @@
 package org.example.labs.model;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,7 +18,8 @@ import org.example.labs.controllres.Controller;
 
 import javafx.stage.Stage;
 
-public class Habitat {
+public class Habitat implements Serializable {
+    private static final long serialVersionUID = 1L; // Пример значения serialVersionUID
     private static Habitat instance; // Статическое поле для хранения единственного экземпляра
     private StackPane root;
     private StackPane AntList;
@@ -25,24 +27,23 @@ public class Habitat {
     private AnimationTimer simulationTimer;
     public Vector<Ant> ants; // Добавим объявление переменной ants
 
-
-
     private HashSet<Integer> identifiers;
     public TreeMap<Integer, Long> spawnTimes;
     int ID;
 
     public Timer timer;
+
     private Habitat() {
         timer = new Timer();
     }
 
-    private long simulationStartTime = 0; // Время начала симуляции
+    public transient long simulationStartTime = 0; // Время начала симуляции
     public int updateTimer;
     private Label statisticsLabel; // Label для вывода статистики
     private Rectangle statisticsRectangle; // Rectangle для вывода статистики
     public boolean moreInfo;
     public volatile boolean paused = false;
-    public  volatile  boolean isExit = false;
+    public volatile boolean isExit = false;
     public boolean startFlag; // Флаг для проверки работы симуляции
     public int N1; // Интервал для рабочих муравьев (в секундах)
     public double P1; // Вероятность для рабочих муравьев
@@ -51,14 +52,15 @@ public class Habitat {
     public int L1;
     public int L2;
 
-    private long waitTime = 0;
-    private long simulationTimes = 0;
-    private long currentTime = 0;
+    public long waitTime = 0;
+    public long simulationTimes = 0;
+    public long currentTime = 0;
 
     long lastWorkerTime;
     long lastWarriorTime;
 
     public Controller controller;
+    private boolean firstStart = false;
 
     public Habitat(StackPane root, StackPane AntList) {
         this.root = root;
@@ -77,8 +79,18 @@ public class Habitat {
     public Vector<Ant> getObjCollection() {
         return this.ants;
     }
-    public HashSet<Integer> getBornCollection() {return identifiers;}
-    public TreeMap<Integer, Long> getIdCollection() {return spawnTimes;}
+
+    public HashSet<Integer> getBornCollection() {
+        return identifiers;
+    }
+
+    public TreeMap<Integer, Long> getIdCollection() {
+        return spawnTimes;
+    }
+
+    public StackPane getStackPane() {
+        return AntList;
+    }
 
     // Статический метод для получения единственного экземпляра класса
     public static Habitat getInstance(StackPane root, StackPane AntList) {
@@ -92,16 +104,32 @@ public class Habitat {
         return instance;
     }
 
-    public long getTimer(){
+    public long getTimer() {
         return simulationTimes;
     }
 
-    public int getID(){
+    public int getID() {
         return ID;
+    }
+
+    public Vector<Ant> getAntsList() {
+        return ants;
+    }
+
+    public TreeMap<Integer, Long> getTreeMap() {
+        return spawnTimes;
+    }
+
+    public HashSet<Integer> getHashSet() {
+        return identifiers;
     }
 
     public void setController(Controller controller) {
         this.controller = controller;
+    }
+
+    public Controller getController() {
+        return controller;
     }
 
     public void startSimulation() {
@@ -113,6 +141,8 @@ public class Habitat {
         lastWarriorTime = 0;
         simulationStartTime = System.currentTimeMillis();
         AntList.getChildren().clear();
+        identifiers.clear();
+        spawnTimes.clear();
         ants.clear(); // Очищаем список муравьев
         statisticsLabel.setText("");
         simulationTimer.start();
@@ -121,19 +151,30 @@ public class Habitat {
     public void stopSimulation() {
         paused = true;
 
-        if(moreInfo) updateStatistics();
+        if (moreInfo)
+            updateStatistics();
         else {
             simulationTimer.stop();
-            AntList.getChildren().clear();
-            identifiers.clear();
-            spawnTimes.clear();
             isExit = true;
         }
+    }
+    public long plusTime = 0;
+    public void resumeSimulation() {
+        paused = false; // Снимаем флаг паузы
+        isExit = false;
+        if (!firstStart) {
+            firstStart = true;
+            simulationStartTime = System.currentTimeMillis();
+            if (plusTime > 0) {
+                simulationStartTime -= plusTime * 1000;
+                //plusTime = 0;
+            }
+        }
+        simulationTimer.start(); // Запускаем таймер симуляции
     }
 
     private AnimationTimer createSimulationTimer() {
         long startTime = System.nanoTime();
-
 
         return new AnimationTimer() {
             @Override
@@ -141,25 +182,42 @@ public class Habitat {
                 if (paused) {
                     currentTime = ((System.currentTimeMillis() - simulationStartTime) / 1000);
                     waitTime = (currentTime - simulationTimes);
-                }
-                else {
+                } else {
                     currentTime = System.currentTimeMillis();
                     simulationTimes = ((currentTime - simulationStartTime) / 1000) - waitTime;
 
                     clearDeadAnt(simulationTimes);
+                    Random rand = new Random();
 
-                    // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для рабочего муравья
+                    System.out.println(simulationTimes + " " + lastWorkerTime + " " + N1 + " " + lastWarriorTime + " " + N2);
+
+                    // Проверяем, прошло ли достаточно времени с момента последнего выполнения
+                    // условия для рабочего муравья
                     if (simulationTimes - lastWorkerTime >= N1) {
                         if (random.nextDouble() <= P1) {
-                            spawnAnt(new WorkerAnt(simulationTimes, L1), simulationTimes);
+                            try {
+                                spawnAnt(
+                                        new WorkerAnt(rand.nextInt(0, 1150), rand.nextInt(0, 850), simulationTimes, L1),
+                                        simulationTimes);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
                         }
                         lastWorkerTime = simulationTimes;
                     }
 
-                    // Проверяем, прошло ли достаточно времени с момента последнего выполнения условия для воинственного муравья
+                    // Проверяем, прошло ли достаточно времени с момента последнего выполнения
+                    // условия для воинственного муравья
                     if (simulationTimes - lastWarriorTime >= N2) {
                         if (random.nextDouble() <= P2) {
-                            spawnAnt(new WarriorAnt(simulationTimes, L2), simulationTimes);
+                            try {
+                                spawnAnt(new WarriorAnt(rand.nextInt(0, 1150), rand.nextInt(0, 850), simulationTimes,
+                                        L2), simulationTimes);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
                         }
                         lastWarriorTime = simulationTimes;
                     }
@@ -169,15 +227,15 @@ public class Habitat {
     }
 
     private void spawnAnt(Ant ant, long currentTime) {
-        StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT); // Отменяем центрирование только для добавленных муравьев
-
+        StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT); // Отменяем центрирование только для добавленных
+                                                                  // муравьев
         double posX;
         double posY;
 
         while (true) {
             posX = random.nextDouble() * 1150;
             posY = random.nextDouble() * 850;
-            if(posX != 0 && posY != 0) {
+            if (posX != 0 && posY != 0) {
                 ant.getImageView().setTranslateX(posX);
                 ant.getImageView().setTranslateY(posY);
                 ant.posX = posX;
@@ -210,7 +268,8 @@ public class Habitat {
         alert.setTitle("Статистика");
         alert.setHeaderText("OK - прекратить симуляцию\nОтмена - продолжить симуляцию");
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow(); // Создаём Stage
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png"))); // Добавляем иконку.
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/org/example/labs/icon/statistics.png"))); // Добавляем
+                                                                                                                  // иконку.
 
         String simulationTimeString;
         long hours = simulationTime / 3600;
@@ -231,10 +290,6 @@ public class Habitat {
         if (result.get() == ButtonType.OK) {
             simulationTimer.stop();
             isExit = true;
-            AntList.getChildren().clear();
-            identifiers.clear();
-            spawnTimes.clear();
-            ID = 0;
             controller.N1.setDisable(false);
             controller.N2.setDisable(false);
             controller.L1.setDisable(false);
@@ -251,39 +306,38 @@ public class Habitat {
             WarriorAntAI Warriorth = WarriorAntAI.getInstance();
             if (controller.btnStopWorkerAI.getText().equals("Рабочих: ON")) {
                 Workerth.isActive = true;
-                synchronized (Workerth){
+                synchronized (Workerth) {
                     Workerth.notify();
                 }
             }
 
             if (controller.btnStopWarriorAI.getText().equals("Солдат: ON")) {
                 Warriorth.isActive = true;
-                synchronized (Warriorth){
+                synchronized (Warriorth) {
                     Warriorth.notify();
                 }
             }
         }
     }
 
-    public void updateTimer(){
+    public void updateTimer() {
         long simulationTime = simulationTimes;
         String simulationTimeString;
         long hours = simulationTime / 3600;
         long minutes = (simulationTime % 3600) / 60;
         long seconds = simulationTime % 60;
-        //simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours, minutes, seconds);
+        // simulationTimeString = String.format("Время: %02d:%02d:%02d\n", hours,
+        // minutes, seconds);
     }
-
-
 
     private void clearDeadAnt(long currentTime) {
         List<AtomicReference<Ant>> foundedFishList = new ArrayList<>();
         AtomicReference<Ant> foundedFish = new AtomicReference<>(); // Временная переменная для объекта
 
-        synchronized (ants){
+        synchronized (ants) {
             ants.forEach(tmp -> { // Перебор массива
-                if (currentTime - tmp.getBirthTime() == tmp.getLifeTime()) { // Проверка на смэрть  не >=, а ==
-
+                if (currentTime - tmp.getBirthTime() >= tmp.getLifeTime()) { // Проверка на смэрть не >=, а ==
+                    System.out.println(currentTime + " " + tmp.getBirthTime() + " " + tmp.getLifeTime() + "  ))))))))))))");
                     AtomicInteger foundedId = new AtomicInteger(); // Временная переменная для ID
                     spawnTimes.forEach((id, birthTime) -> {
                         if (tmp.getBirthTime() == birthTime) { // Находим объект с таким же временем в treeMap
@@ -292,7 +346,7 @@ public class Habitat {
                     });
                     identifiers.remove(foundedId.get()); // Удаляем его из hashSet
                     spawnTimes.remove(foundedId.get()); // Удаляем его из treeMap
-                    AntList.getChildren().remove(tmp.getImageView()); // Удаляем из Pane
+                    AntList.getChildren().remove(tmp.getImageView()); // Удаляем из StackPane
                     foundedFish.set(tmp); // Берём этот элемент и копируем в временную переменную
                     foundedFishList.add(foundedFish);
                 }
@@ -302,4 +356,21 @@ public class Habitat {
             }
         }
     }
+
+    public void clearObjects() {
+        synchronized (ants) {
+            AntList.getChildren().clear(); // Очистка всех объектов на экране
+            identifiers.clear(); // Очистка идентификаторов
+            spawnTimes.clear(); // Очистка времени появления
+            ID = 0; // Сброс ID
+            ants.clear(); // Очистка списка муравьев
+        }
+    }
+
+    public void restartSimulationTimer() {
+        simulationTimer.stop(); // Остановка таймера
+        simulationStartTime = System.currentTimeMillis(); // Установка нового времени начала симуляции
+        simulationTimer.start(); // Запуск таймера с новым временем начала
+    }
+
 }
