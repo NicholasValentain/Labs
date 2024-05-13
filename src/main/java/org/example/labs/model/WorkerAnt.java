@@ -7,7 +7,7 @@ import java.util.Random;
 
 import javafx.scene.image.Image;
 
-class WorkerAnt extends Ant {
+public class WorkerAnt extends Ant {
     private static final long serialVersionUID = 1L; // Пример значения serialVersionUID
     private static final double MOVEMENT_SPEED = 5.0;
 

@@ -135,6 +135,7 @@ public class Habitat implements Serializable {
     public void startSimulation() {
         isExit = false;
         paused = false;
+        firstStart = true;
         waitTime = 0;
         ID = 0;
         lastWorkerTime = 0;
@@ -154,7 +155,7 @@ public class Habitat implements Serializable {
         if (moreInfo)
             updateStatistics();
         else {
-            simulationTimer.stop();
+            //simulationTimer.stop();
             isExit = true;
         }
     }
@@ -188,8 +189,6 @@ public class Habitat implements Serializable {
 
                     clearDeadAnt(simulationTimes);
                     Random rand = new Random();
-
-                    System.out.println(simulationTimes + " " + lastWorkerTime + " " + N1 + " " + lastWarriorTime + " " + N2);
 
                     // Проверяем, прошло ли достаточно времени с момента последнего выполнения
                     // условия для рабочего муравья
@@ -243,6 +242,20 @@ public class Habitat implements Serializable {
                 break;
             }
         }
+
+        AntList.getChildren().add(ant.getImageView());
+        ants.add(ant);
+        identifiers.add(ID);
+        spawnTimes.put(ID, currentTime);
+        ID++;
+    }
+
+    public void addAnt(Ant ant, long currentTime, double x, double y) {
+        StackPane.setAlignment(ant.getImageView(), Pos.TOP_LEFT); // Отменяем центрирование только для добавленных муравьев
+        ant.getImageView().setTranslateX(x);
+        ant.getImageView().setTranslateY(y);
+        ant.posX = x;
+        ant.posY = y;
 
         AntList.getChildren().add(ant.getImageView());
         ants.add(ant);

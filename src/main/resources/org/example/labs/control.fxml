@@ -16,6 +16,7 @@
 <?import javafx.scene.text.Font?>
 
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ListView?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.labs.controllres.Controller">
     <top>
         <MenuBar>
@@ -43,6 +44,14 @@
                         <MenuItem text="Показать/Скрыть (T)" onAction="#clickTime" />
                     </items>
                 </Menu>
+                <Menu text="База Данных">
+                    <items>
+                        <MenuItem text="Сохранить всех" onAction="#saveAnt"/>
+                        <MenuItem text="Сохранить рабочих" onAction="#saveWorkerAnt"/>
+                        <MenuItem text="Сохранить воинов" onAction="#saveWarriorAnt"/>
+                        <MenuItem text="Загрузить" onAction="#loadAnt"/>
+                    </items>
+                </Menu>
 
             </menus>
         </MenuBar>
@@ -50,11 +59,15 @@
     <center>
         <Pane>
             <children>
+
+                <ListView fx:id="listView" style="-fx-background-color: #bbbbbb;" onMousePressed="#takeUser" layoutX="1600" layoutY="0" prefWidth="300" prefHeight="900"/>
+
                 <Button fx:id="btnStart" text="СТАРТ (B)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #62B567;" onAction="#click" layoutX="1230" layoutY="10" prefWidth="100" prefHeight="30"/>
                 <Button fx:id="btnStop" text="СТОП (E)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #E32636;" onAction="#click" layoutX="1340" layoutY="10" prefWidth="100" prefHeight="30"/>
                 <Button fx:id="btnResume" text="ВОЗОБНОВИТЬ (R)" style="-fx-font-size: 13px; -fx-font-weight: bold;" onAction="#resume" layoutX="1450" layoutY="10" prefWidth="140" prefHeight="30"/>
                 <Button fx:id="btnList" text="Текущие объекты" style="-fx-font-size: 20px; -fx-font-weight: bold;" onAction="#openDialog" layoutX="1240" layoutY="800" prefWidth="320" prefHeight="20"/>
                 <Button fx:id="btnConsole" text="Console (`)" style="-fx-font-size: 20px; -fx-font-weight: bold;" onAction="#openConsole" layoutX="1240" layoutY="750" prefWidth="320" prefHeight="20"/>
+
                 <fx:define>
                     <ToggleGroup fx:id="group"/>
                 </fx:define>

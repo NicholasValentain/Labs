@@ -83,7 +83,7 @@ public class AntSimulation extends Application implements Serializable {
         descriptionText.setStrokeType(StrokeType.OUTSIDE); // Устанавливаем тип обводки
         root.getChildren().add(descriptionText);
 
-        Scene scene = new Scene(root, 1600, 900); // Основное окно
+        Scene scene = new Scene(root, 1900, 900); // Основное окно
 
         Rectangle rectangleManagement = new Rectangle(400, 900, Color.WHITE); // Окно для кнопок
         StackPane.setAlignment(rectangleManagement, Pos.TOP_LEFT); // Отменяем центрирование
@@ -94,6 +94,12 @@ public class AntSimulation extends Application implements Serializable {
         rectangleManagement.setStrokeWidth(5); // Установка ширины обводки
         rectangleManagement.setStrokeType(StrokeType.INSIDE); // Установка типа обводки внутри
         root.getChildren().add(rectangleManagement);// Добавляем прямоугольник на сцену
+
+        Rectangle rectangleUsers = new Rectangle(300, 900, Color.LIGHTGRAY); // Окно для кнопок
+        StackPane.setAlignment(rectangleUsers, Pos.TOP_LEFT); // Отменяем центрирование
+        rectangleUsers.setTranslateX(1600); // Устанавливаем координату X
+        rectangleUsers.setTranslateY(0); // Устанавливаем координату Y
+        root.getChildren().add(rectangleUsers);// Добавляем прямоугольник на сцену
 
         StackPane FXMLstackPane = new StackPane();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/labs/control.fxml"));
@@ -227,14 +233,12 @@ public class AntSimulation extends Application implements Serializable {
 
     // Метод для запуска таймера обновления времени
     private void startTimer() {
-        //System.out.println(simulationStartTime + " " + simulationTime + " " + waitTime);
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (!habitat.paused) {
                     currentTime = System.currentTimeMillis();
                     simulationTime = ((currentTime - simulationStartTime) / 1000) - waitTime;
-                    //System.out.println(simulationStartTime + " " + simulationTime + " " + waitTime+ " " + currentTime);
                     long hours = simulationTime / 3600;
                     long minutes = (simulationTime % 3600) / 60;
                     long seconds = simulationTime % 60;
@@ -271,6 +275,7 @@ public class AntSimulation extends Application implements Serializable {
         times.setText("Время: 00:00:00");// Сброс текста отображаемого времени
         waitTime = 0;
         startFlag = true;
+        firstStart = true;
         root.getChildren().remove(descriptionText);
         simulationStartTime = System.currentTimeMillis();
         habitat.startSimulation();
