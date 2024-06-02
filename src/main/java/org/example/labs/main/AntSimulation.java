@@ -83,7 +83,7 @@ public class AntSimulation extends Application implements Serializable {
         descriptionText.setStrokeType(StrokeType.OUTSIDE); // Устанавливаем тип обводки
         root.getChildren().add(descriptionText);
 
-        Scene scene = new Scene(root, 1900, 900); // Основное окно
+        Scene scene = new Scene(root, 1600, 900); // Основное окно
 
         Rectangle rectangleManagement = new Rectangle(400, 900, Color.WHITE); // Окно для кнопок
         StackPane.setAlignment(rectangleManagement, Pos.TOP_LEFT); // Отменяем центрирование

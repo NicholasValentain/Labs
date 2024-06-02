@@ -1,0 +1,269 @@
+Index: src/main/resources/org/example/labs/control.fxml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n\r\n<?import javafx.scene.control.Button?>\r\n<?import javafx.scene.control.CheckBox?>\r\n<?import javafx.scene.control.ComboBox?>\r\n<?import javafx.scene.control.RadioButton?>\r\n<?import javafx.scene.control.Menu?>\r\n<?import javafx.scene.control.MenuBar?>\r\n<?import javafx.scene.control.MenuItem?>\r\n<?import javafx.scene.control.TextField?>\r\n<?import javafx.scene.layout.BorderPane?>\r\n<?import javafx.scene.layout.Pane?>\r\n\r\n\r\n<?import javafx.scene.control.Label?>\r\n<?import javafx.scene.text.Font?>\r\n\r\n<?import javafx.scene.control.ToggleGroup?>\r\n<BorderPane xmlns:fx=\"http://javafx.com/fxml/1\" fx:controller=\"org.example.labs.controllres.Controller\">\r\n    <top>\r\n        <MenuBar>\r\n            <menus>\r\n                <Menu text=\"Файл\">\r\n                    <items>\r\n                        <MenuItem text=\"Выход\" onAction=\"#handleMenuAction\"/>\r\n                    </items>\r\n                </Menu>\r\n                <Menu text=\"Запуск\">\r\n                    <items>\r\n                        <MenuItem text=\"Старт (B)\" onAction=\"#handleMenuAction\"/>\r\n                        <MenuItem text=\"Стоп (E)\" onAction=\"#handleMenuAction\"/>\r\n                    </items>\r\n                </Menu>\r\n                <Menu text=\"Информация\">\r\n                    <items>\r\n                        <MenuItem text=\"Показать/Скрыть\" onAction=\"#clickInf\" />\r\n                    </items>\r\n                </Menu>\r\n                <Menu text=\"Таймер\">\r\n                    <items>\r\n                        <MenuItem text=\"Показать/Скрыть (T)\" onAction=\"#clickTime\" />\r\n                    </items>\r\n                </Menu>\r\n\r\n            </menus>\r\n        </MenuBar>\r\n    </top>\r\n    <center>\r\n        <Pane>\r\n            <children>\r\n                <Button fx:id=\"btnStart\" text=\"СТАРТ (B)\" style=\"-fx-font-size: 20px; -fx-font-weight: bold;\" onAction=\"#click\" layoutX=\"1230\" layoutY=\"10\" prefWidth=\"160\" prefHeight=\"30\"/>\r\n                <Button fx:id=\"btnStop\" text=\"СТОП (E)\" style=\"-fx-font-size: 20px; -fx-font-weight: bold;\" onAction=\"#click\" layoutX=\"1410\" layoutY=\"10\" prefWidth=\"160\" prefHeight=\"30\"/>\r\n                <Button fx:id=\"btnList\" text=\"Текущие объекты\" style=\"-fx-font-size: 24px; -fx-font-weight: bold;\" onAction=\"#openDialog\" layoutX=\"1240\" layoutY=\"790\" prefWidth=\"320\" prefHeight=\"30\"/>\r\n\r\n                <Label layoutX=\"1225\" layoutY=\"580\" text=\"Движение\" >\r\n                    <font>\r\n                        <Font name=\"System Bold\" size=\"24.0\" />\r\n                    </font>\r\n                </Label>\r\n                <Button fx:id=\"btnStopWorkerAI\" text=\"Рабочих: ON\" style=\"-fx-font-size: 16px; -fx-font-weight: bold;\" onAction=\"#controlWorkerAI\" layoutX=\"1220\" layoutY=\"620\" prefWidth=\"160\" prefHeight=\"30\"/>\r\n                <Button fx:id=\"btnStopWarriorAI\" text=\"Солдат: ON\" style=\"-fx-font-size: 16px; -fx-font-weight: bold;\" onAction=\"#controlWarriorAI\" layoutX=\"1390\" layoutY=\"620\" prefWidth=\"160\" prefHeight=\"30\"/>\r\n\r\n                <Label layoutX=\"1220\" layoutY=\"655\" text=\"Приоретет потоков\" >\r\n                    <font>\r\n                        <Font name=\"System Bold\" size=\"24.0\" />\r\n                    </font>\r\n                </Label>\r\n                <Label layoutX=\"1350\" layoutY=\"690\" text=\"Рабочий\" >\r\n                    <font>\r\n                        <Font size=\"20.0\" />\r\n                    </font>\r\n                </Label>\r\n                <ComboBox fx:id=\"WorkerPriority\" style=\"-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" layoutX=\"1230\" layoutY=\"690\" prefWidth=\"95.0\"/>\r\n                <Label layoutX=\"1350\" layoutY=\"740\" text=\"Солдат\" >\r\n                    <font>\r\n                        <Font size=\"20.0\" />\r\n                    </font>\r\n                </Label>\r\n                <ComboBox fx:id=\"WarriorPriority\" style=\"-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" layoutX=\"1230\" layoutY=\"740\" prefWidth=\"95.0\"/>\r\n\r\n\r\n\r\n                <fx:define>\r\n                    <ToggleGroup fx:id=\"group\"/>\r\n                </fx:define>\r\n                <RadioButton fx:id=\"ShowTime\" toggleGroup=\"$group\" text=\"Показать время (T)\" style=\"-fx-font-size: 12px; -fx-scale-x: 1.1; -fx-scale-y: 1.1;\" onAction=\"#clickTimeSwitch\" layoutX=\"1240\" layoutY=\"60\" prefHeight=\"30\" prefWidth=\"200\"></RadioButton>\r\n                <RadioButton fx:id=\"HideTime\" toggleGroup=\"$group\" text=\"Скрыть время (T)\" style=\"-fx-font-size: 12px; -fx-scale-x: 1.1; -fx-scale-y: 1.1;\" onAction=\"#clickTimeSwitch\" layoutX=\"1420\" layoutY=\"60\" prefHeight=\"30\" prefWidth=\"200\"></RadioButton>\r\n                <CheckBox fx:id=\"cbShowInfo\" text=\"Показать информацию\" style=\"-fx-font-size: 14px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" onAction=\"#check\" layoutX=\"1245\" layoutY=\"90\"/>\r\n                <Label layoutX=\"1225\" layoutY=\"130\" text=\"Периоды рождения (сек)\" >\r\n                    <font>\r\n                        <Font name=\"System Bold\" size=\"24.0\" />\r\n                    </font>\r\n                </Label>\r\n\r\n                <Label layoutX=\"1340\" layoutY=\"170\" text=\"Рабочий\" >\r\n                    <font>\r\n                        <Font size=\"20.0\" />\r\n                    </font>\r\n                </Label>\r\n                <TextField fx:id=\"N1\" style=\"-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" layoutX=\"1230\" layoutY=\"170\" prefWidth=\"80\" />\r\n                <Label layoutX=\"1340\" layoutY=\"230\" text=\"Солдат\" >\r\n                    <font>\r\n                        <Font size=\"20.0\" />\r\n                    </font>\r\n                </Label>\r\n                <TextField fx:id=\"N2\" style=\"-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" layoutX=\"1230\" layoutY=\"230\" prefWidth=\"80\" />\r\n\r\n                <Label layoutX=\"1220\" layoutY=\"280\" text=\"Время жизни (сек)\" >\r\n                    <font>\r\n                        <Font name=\"System Bold\" size=\"24.0\" />\r\n                    </font>\r\n                </Label>\r\n                <Label layoutX=\"1340\" layoutY=\"320\" text=\"Рабочий\" >\r\n                    <font>\r\n                        <Font size=\"20.0\" />\r\n                    </font>\r\n                </Label>\r\n                <TextField fx:id=\"L1\" style=\"-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" layoutX=\"1230\" layoutY=\"320\" prefWidth=\"80\" />\r\n                <Label layoutX=\"1340\" layoutY=\"380\" text=\"Солдат\" >\r\n                    <font>\r\n                        <Font size=\"20.0\" />\r\n                    </font>\r\n                </Label>\r\n                <TextField fx:id=\"L2\" style=\"-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" layoutX=\"1230\" layoutY=\"380\" prefWidth=\"80\" />\r\n\r\n                <Label layoutX=\"1220\" layoutY=\"430\" text=\"Вероятность рождения (%)\" >\r\n                    <font>\r\n                        <Font name=\"System Bold\" size=\"24.0\" />\r\n                    </font>\r\n                </Label>\r\n                <Label layoutX=\"1350\" layoutY=\"470\" text=\"Рабочий\" >\r\n                    <font>\r\n                        <Font size=\"20.0\" />\r\n                    </font>\r\n                </Label>\r\n                <ComboBox fx:id=\"P1\" style=\"-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" layoutX=\"1230\" layoutY=\"470\" prefWidth=\"95.0\"/>\r\n                <Label layoutX=\"1350\" layoutY=\"530\" text=\"Солдат\" >\r\n                    <font>\r\n                        <Font size=\"20.0\" />\r\n                    </font>\r\n                </Label>\r\n                <ComboBox fx:id=\"P2\" style=\"-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;\" layoutX=\"1230\" layoutY=\"530\" prefWidth=\"95.0\"/>\r\n            </children>\r\n        </Pane>\r\n    </center>\r\n</BorderPane>\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/org/example/labs/control.fxml b/src/main/resources/org/example/labs/control.fxml
+--- a/src/main/resources/org/example/labs/control.fxml	(revision 1bf217fd75840f0a0e5de0eaf5c8c43d79061e1c)
++++ b/src/main/resources/org/example/labs/control.fxml	(date 1714041547570)
+@@ -51,6 +51,7 @@
+                 <Button fx:id="btnStart" text="СТАРТ (B)" style="-fx-font-size: 20px; -fx-font-weight: bold;" onAction="#click" layoutX="1230" layoutY="10" prefWidth="160" prefHeight="30"/>
+                 <Button fx:id="btnStop" text="СТОП (E)" style="-fx-font-size: 20px; -fx-font-weight: bold;" onAction="#click" layoutX="1410" layoutY="10" prefWidth="160" prefHeight="30"/>
+                 <Button fx:id="btnList" text="Текущие объекты" style="-fx-font-size: 24px; -fx-font-weight: bold;" onAction="#openDialog" layoutX="1240" layoutY="790" prefWidth="320" prefHeight="30"/>
++                <Button fx:id="btnConsole" text="Console" style="-fx-font-size: 24px; -fx-font-weight: bold;" onAction="#openConsole" layoutX="10" layoutY="810" prefWidth="160" prefHeight="30"/>
+ 
+                 <Label layoutX="1225" layoutY="580" text="Движение" >
+                     <font>
+Index: src/main/java/org/example/labs/controllres/Controller.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.labs.controllres;\r\n\r\nimport javafx.collections.FXCollections;\r\nimport javafx.collections.ObservableList;\r\nimport javafx.event.ActionEvent;\r\nimport javafx.fxml.FXML;\r\nimport javafx.fxml.FXMLLoader;\r\nimport javafx.scene.Parent;\r\nimport javafx.scene.Scene;\r\nimport javafx.scene.control.*;\r\n\r\nimport javafx.scene.image.Image;\r\nimport javafx.stage.Modality;\r\nimport javafx.stage.Stage;\r\nimport org.example.labs.model.Habitat; // Импортируем класс Habitat\r\nimport org.example.labs.main.AntSimulation;\r\nimport org.example.labs.model.WarriorAntAI;\r\nimport org.example.labs.model.WorkerAntAI;\r\n\r\nimport java.io.IOException;\r\nimport java.util.TreeMap;\r\n\r\n\r\npublic class Controller {\r\n    @FXML\r\n    public Button btnStart, btnStop, btnList, btnStopWorkerAI, btnStopWarriorAI;\r\n    @FXML\r\n    public RadioButton ShowTime, HideTime;\r\n    @FXML\r\n    public CheckBox cbShowInfo;\r\n    @FXML\r\n    public TextField N1, N2, L1, L2;\r\n    @FXML\r\n    public ComboBox P1, P2, WorkerPriority, WarriorPriority;\r\n\r\n    //@FXML\r\n    //public TableView<Map.Entry<Integer, Long>> tableView;\r\n\r\n    public TreeMap<Integer, Long> treeMap;\r\n    private Habitat habitat; // Добавляем поле для хранения ссылки на habitat\r\n    private AntSimulation antSimulation;\r\n\r\n    // Создание списка элементов для ComboBox\r\n    ObservableList<String> options = FXCollections.observableArrayList(\r\n            \"10\", \"20\", \"30\", \"40\", \"50\", \"60\", \"70\", \"80\", \"90\", \"100\" );\r\n    ObservableList<String> prioritys = FXCollections.observableArrayList(\r\n            \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"10\" );\r\n\r\n    // Метод для установки ссылки на habitat\r\n    public void setHabitat(Habitat habitat, AntSimulation antSimulation) {\r\n        this.habitat = habitat;\r\n        this.antSimulation = antSimulation;\r\n        N1.setText(\"1\");\r\n        N2.setText(\"1\");\r\n        L1.setText(\"1\");\r\n        L2.setText(\"1\");\r\n        ShowTime.setSelected(true);\r\n        btnStop.setDisable(true);\r\n        // Установка списка элементов в ComboBox\r\n        P1.setItems(options);\r\n        P2.setItems(options);\r\n        P1.setValue(\"100\");\r\n        P2.setValue(\"100\");\r\n        WorkerPriority.setItems(prioritys);\r\n        WarriorPriority.setItems(prioritys);\r\n        WorkerPriority.setValue(\"5\");\r\n        WarriorPriority.setValue(\"5\");\r\n\r\n\r\n        //tableView.setVisible(false);\r\n    }\r\n\r\n    @FXML\r\n    private void click(ActionEvent event) {\r\n        Button clickedButton = (Button) event.getSource();\r\n        switch (clickedButton.getId()) {\r\n            case \"btnStart\":\r\n                if (habitat != null && !antSimulation.startFlag && checkError()) {\r\n                    btnStart.setDisable(true);\r\n                    btnStop.setDisable(false);\r\n\r\n                    N1.setDisable(true);\r\n                    N2.setDisable(true);\r\n                    L1.setDisable(true);\r\n                    L2.setDisable(true);\r\n                    P1.setDisable(true);\r\n                    P2.setDisable(true);\r\n                    WorkerPriority.setDisable(true);\r\n                    WarriorPriority.setDisable(true);\r\n                    cbShowInfo.setDisable(true);\r\n\r\n\r\n\r\n                    //WorkerAntAI.getInstance().isActive = true;\r\n                    //WorkerAntAI.getInstance().monitor.notify();\r\n                    //WarriorAntAI.getInstance().isActive = true;\r\n                   //WarriorAntAI.getInstance().monitor.notify();\r\n\r\n                    WorkerAntAI Workerth = WorkerAntAI.getInstance();\r\n                    WarriorAntAI Warriorth = WarriorAntAI.getInstance();\r\n\r\n\r\n                    if (btnStopWorkerAI.getText().equals(\"Рабочих: ON\")) {\r\n                        Workerth.isActive = true;\r\n                        //WorkerAntAI.getInstance().notify();\r\n                        synchronized (Workerth){\r\n                            Workerth.notify();\r\n                        }\r\n                    }\r\n\r\n                    if (btnStopWarriorAI.getText().equals(\"Солдат: ON\")) {\r\n                        Warriorth.isActive = true;\r\n                        //WarriorAntAI.getInstance().notify();\r\n                        synchronized (Warriorth){\r\n                            Warriorth.notify();\r\n                        }\r\n                    }\r\n\r\n                    antSimulation.startSimulation();\r\n                }\r\n                break;\r\n            case \"btnStop\":\r\n                if (habitat != null && antSimulation.startFlag) {\r\n                    if(cbShowInfo.isSelected()) {\r\n                        btnStart.setDisable(true);\r\n                        btnStop.setDisable(true);\r\n                    }\r\n                    if(!cbShowInfo.isSelected()) {\r\n                        N1.setDisable(false);\r\n                        N2.setDisable(false);\r\n                        L1.setDisable(false);\r\n                        L2.setDisable(false);\r\n                        P1.setDisable(false);\r\n                        P2.setDisable(false);\r\n                        WorkerPriority.setDisable(false);\r\n                        WarriorPriority.setDisable(false);\r\n                        cbShowInfo.setDisable(false);\r\n                    }\r\n\r\n                    WorkerAntAI Workerth = WorkerAntAI.getInstance();\r\n                    WarriorAntAI Warriorth = WarriorAntAI.getInstance();\r\n                    Workerth.isActive = false;\r\n                    synchronized (Workerth){\r\n                        Workerth.notify();\r\n                    }\r\n                    Warriorth.isActive = false;\r\n                    synchronized (Warriorth){\r\n                        Warriorth.notify();\r\n                    }\r\n                    antSimulation.stopSimulation();\r\n                }\r\n                break;\r\n        }\r\n    }\r\n    @FXML\r\n    private void clickTimeSwitch() {\r\n        if (ShowTime.isSelected() && !antSimulation.timerVisible) {\r\n            antSimulation.timerVisible = true;\r\n            antSimulation.root.getChildren().add(antSimulation.times);\r\n            //HideTime.setSelected(false);\r\n        }\r\n        else if (HideTime.isSelected() && antSimulation.timerVisible) {\r\n            antSimulation.timerVisible = false;\r\n            antSimulation.root.getChildren().remove(antSimulation.times);\r\n            //ShowTime.setSelected(false);\r\n        }\r\n    }\r\n\r\n    @FXML\r\n    private void check() { habitat.moreInfo = cbShowInfo.isSelected(); }\r\n\r\n    @FXML\r\n    public boolean checkError() {\r\n        int n1 = 1;\r\n        int n2 = 1;\r\n        int l1 = 1;\r\n        int l2 = 1;\r\n\r\n        try {\r\n            n1 = Integer.parseInt(N1.getText());\r\n            n2 = Integer.parseInt(N2.getText());\r\n            l1 = Integer.parseInt(L1.getText());\r\n            l2 = Integer.parseInt(L2.getText());\r\n\r\n            if (n1 < 1 || n2 < 1 || l1 < 1 || l2 < 1) throw new NumberFormatException(\"Число меньше 1\");\r\n\r\n\r\n            habitat.N1 = n1;\r\n            habitat.N2 = n2;\r\n            habitat.L1 = l1;\r\n            habitat.L2 = l2;\r\n\r\n            habitat.P1 = Double.parseDouble((String) P1.getValue()) / 100;\r\n            habitat.P2 = Double.parseDouble((String) P2.getValue()) / 100;\r\n            WorkerAntAI.getInstance().setPriority(Integer.parseInt((String) WorkerPriority.getValue()));\r\n            WarriorAntAI.getInstance().setPriority(Integer.parseInt((String) WarriorPriority.getValue()));\r\n\r\n\r\n        }\r\n        catch (NumberFormatException ex) {\r\n            Alert alert = new Alert(Alert.AlertType.ERROR);\r\n            alert.setTitle(\"Ошибка!\");\r\n            alert.setHeaderText(\"Некорректный период рождения\");\r\n            alert.setContentText(\"Требуется целое положительное число!\");\r\n\r\n            // Проверяем, на некорректный ввод\r\n            if (!N1.getText().matches(\"\\\\d+\") || n1 < 1) N1.setText(\"1\");\r\n            if (!N2.getText().matches(\"\\\\d+\") || n2 < 1) N2.setText(\"1\");\r\n            if (!L1.getText().matches(\"\\\\d+\") || l1 < 1) L1.setText(\"1\");\r\n            if (!L2.getText().matches(\"\\\\d+\") || l2 < 1) L2.setText(\"1\");\r\n\r\n            // Get the Stage.\r\n            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();\r\n            // Add a custom icon.\r\n            stage.getIcons().add(new Image(getClass().getResourceAsStream(\"/org/example/labs/icon/error.png\")));\r\n            alert.showAndWait();\r\n            return false;\r\n        }\r\n        return true;\r\n    }\r\n    @FXML\r\n    private void handleMenuAction(ActionEvent event) {\r\n        MenuItem menuItem = (MenuItem) event.getSource();\r\n        switch (menuItem.getText()) {\r\n            case \"Выход\":\r\n                System.exit(0);\r\n                break;\r\n            case \"Старт (B)\":\r\n                if (habitat != null && !antSimulation.startFlag) {\r\n                    btnStart.setDisable(true);\r\n                    btnStop.setDisable(false);\r\n\r\n                    N1.setDisable(true);\r\n                    N2.setDisable(true);\r\n                    L1.setDisable(true);\r\n                    L2.setDisable(true);\r\n                    P1.setDisable(true);\r\n                    P2.setDisable(true);\r\n                    cbShowInfo.setDisable(true);\r\n                    checkError();\r\n                    antSimulation.startSimulation();\r\n                }\r\n                break;\r\n            case \"Стоп (E)\":\r\n                if (habitat != null && antSimulation.startFlag) {\r\n                    if(cbShowInfo.isSelected()) {\r\n                        btnStart.setDisable(true);\r\n                        btnStop.setDisable(true);\r\n                    }\r\n\r\n                    N1.setDisable(false);\r\n                    N2.setDisable(false);\r\n                    L1.setDisable(false);\r\n                    L2.setDisable(false);\r\n                    P1.setDisable(false);\r\n                    P2.setDisable(false);\r\n                    cbShowInfo.setDisable(false);\r\n                    antSimulation.stopSimulation();\r\n                }\r\n                break;\r\n        }\r\n    }\r\n\r\n    @FXML\r\n    private void clickTime() {\r\n        // Изменяем состояние видимости таймера и обновляем чекбоксы\r\n        if (antSimulation.timerVisible) {\r\n            antSimulation.root.getChildren().remove(antSimulation.times);\r\n            antSimulation.timerVisible = false;\r\n            HideTime.setSelected(true);\r\n            ShowTime.setSelected(false);\r\n        } else {\r\n            antSimulation.root.getChildren().add(antSimulation.times);\r\n            antSimulation.timerVisible = true;\r\n            ShowTime.setSelected(true);\r\n            HideTime.setSelected(false);\r\n        }\r\n    }\r\n\r\n    @FXML\r\n    private void handleTimerMenuAction(ActionEvent event) {\r\n        MenuItem menuItem = (MenuItem) event.getSource();\r\n        if (\"Показать/Скрыть (T)\".equals(menuItem.getText())) {\r\n            if (antSimulation != null) {\r\n                // Изменяем состояние видимости таймера и обновляем чекбоксы\r\n                antSimulation.setTimerVisible(!antSimulation.isTimerVisible());\r\n                ShowTime.setSelected(antSimulation.isTimerVisible());\r\n                HideTime.setSelected(!antSimulation.isTimerVisible());\r\n            }\r\n        }\r\n    }\r\n\r\n    @FXML\r\n    private void clickInf() {\r\n        if(!cbShowInfo.isDisable()) {\r\n            if(!cbShowInfo.isSelected()) {\r\n                cbShowInfo.setSelected(true);\r\n                habitat.moreInfo = cbShowInfo.isSelected();\r\n            }\r\n            else {\r\n                cbShowInfo.setSelected(false);\r\n                habitat.moreInfo = cbShowInfo.isSelected();\r\n            }\r\n        }\r\n    }\r\n    @FXML\r\n    private void openDialog() {\r\n        try {\r\n            treeMap = habitat.spawnTimes;\r\n            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(\"/org/example/labs/dialogList.fxml\"));\r\n            Parent root = fxmlLoader.load();\r\n            DialogListController dialogController = fxmlLoader.getController();\r\n            dialogController.setTreeMap(treeMap); // Устанавливаем TreeMap\r\n\r\n            Stage stage = new Stage();\r\n            stage.initModality(Modality.APPLICATION_MODAL);\r\n            stage.setTitle(\"Текущие объекты\");\r\n            stage.getIcons().add(new Image(getClass().getResource(\"/org/example/labs/icon/table.png\").toExternalForm()));\r\n            stage.setScene(new Scene(root));\r\n            stage.showAndWait(); // Показываем окно и ждем, пока его закроют\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    @FXML\r\n    private void controlWorkerAI(){\r\n\r\n        WorkerAntAI Workerth = WorkerAntAI.getInstance();\r\n\r\n        if (btnStopWorkerAI.getText().equals(\"Рабочих: ON\")) {\r\n            Workerth.isActive = false;\r\n            btnStopWorkerAI.setText(\"Рабочих: OFF\");\r\n        }\r\n        else {\r\n            Workerth.isActive = true;\r\n            synchronized (Workerth){\r\n                Workerth.notify();\r\n            }\r\n            btnStopWorkerAI.setText(\"Рабочих: ON\");\r\n        }\r\n    }\r\n\r\n    @FXML\r\n    private void controlWarriorAI(){\r\n        WarriorAntAI Warriorth = WarriorAntAI.getInstance();\r\n        if (btnStopWarriorAI.getText().equals(\"Солдат: ON\")) {\r\n            Warriorth.isActive = false;\r\n            btnStopWarriorAI.setText(\"Солдат: OFF\");\r\n        }\r\n        else {\r\n            Warriorth.isActive = true;\r\n            synchronized (Warriorth){\r\n                Warriorth.notify();\r\n            }\r\n            btnStopWarriorAI.setText(\"Солдат: ON\");\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/labs/controllres/Controller.java b/src/main/java/org/example/labs/controllres/Controller.java
+--- a/src/main/java/org/example/labs/controllres/Controller.java	(revision 1bf217fd75840f0a0e5de0eaf5c8c43d79061e1c)
++++ b/src/main/java/org/example/labs/controllres/Controller.java	(date 1714059770421)
+@@ -10,6 +10,9 @@
+ import javafx.scene.control.*;
+ 
+ import javafx.scene.image.Image;
++import javafx.scene.layout.Background;
++import javafx.scene.layout.Pane;
++import javafx.scene.paint.Color;
+ import javafx.stage.Modality;
+ import javafx.stage.Stage;
+ import org.example.labs.model.Habitat; // Импортируем класс Habitat
+@@ -23,7 +26,7 @@
+ 
+ public class Controller {
+     @FXML
+-    public Button btnStart, btnStop, btnList, btnStopWorkerAI, btnStopWarriorAI;
++    public Button btnStart, btnStop, btnList, btnStopWorkerAI, btnStopWarriorAI, btnConsole;
+     @FXML
+     public RadioButton ShowTime, HideTime;
+     @FXML
+@@ -75,83 +78,83 @@
+         Button clickedButton = (Button) event.getSource();
+         switch (clickedButton.getId()) {
+             case "btnStart":
+-                if (habitat != null && !antSimulation.startFlag && checkError()) {
+-                    btnStart.setDisable(true);
+-                    btnStop.setDisable(false);
++                start();
++                break;
++            case "btnStop":
++                stop();
++                break;
++        }
++    }
++
++    public void start() {
++        if (habitat != null && !antSimulation.startFlag && checkError()) {
++            btnStart.setDisable(true);
++            btnStop.setDisable(false);
+ 
+-                    N1.setDisable(true);
+-                    N2.setDisable(true);
+-                    L1.setDisable(true);
+-                    L2.setDisable(true);
+-                    P1.setDisable(true);
+-                    P2.setDisable(true);
+-                    WorkerPriority.setDisable(true);
+-                    WarriorPriority.setDisable(true);
+-                    cbShowInfo.setDisable(true);
+-
+-
+-
+-                    //WorkerAntAI.getInstance().isActive = true;
+-                    //WorkerAntAI.getInstance().monitor.notify();
+-                    //WarriorAntAI.getInstance().isActive = true;
+-                   //WarriorAntAI.getInstance().monitor.notify();
+-
+-                    WorkerAntAI Workerth = WorkerAntAI.getInstance();
+-                    WarriorAntAI Warriorth = WarriorAntAI.getInstance();
++            N1.setDisable(true);
++            N2.setDisable(true);
++            L1.setDisable(true);
++            L2.setDisable(true);
++            P1.setDisable(true);
++            P2.setDisable(true);
++            WorkerPriority.setDisable(true);
++            WarriorPriority.setDisable(true);
++            cbShowInfo.setDisable(true);
++            WorkerAntAI Workerth = WorkerAntAI.getInstance();
++            WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+ 
+-
+-                    if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
+-                        Workerth.isActive = true;
+-                        //WorkerAntAI.getInstance().notify();
+-                        synchronized (Workerth){
+-                            Workerth.notify();
+-                        }
+-                    }
++            if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
++                Workerth.isActive = true;
++                //WorkerAntAI.getInstance().notify();
++                synchronized (Workerth){
++                    Workerth.notify();
++                }
++            }
+ 
+-                    if (btnStopWarriorAI.getText().equals("Солдат: ON")) {
+-                        Warriorth.isActive = true;
+-                        //WarriorAntAI.getInstance().notify();
+-                        synchronized (Warriorth){
+-                            Warriorth.notify();
+-                        }
+-                    }
++            if (btnStopWarriorAI.getText().equals("Солдат: ON")) {
++                Warriorth.isActive = true;
++                //WarriorAntAI.getInstance().notify();
++                synchronized (Warriorth){
++                    Warriorth.notify();
++                }
++            }
+ 
+-                    antSimulation.startSimulation();
+-                }
+-                break;
+-            case "btnStop":
+-                if (habitat != null && antSimulation.startFlag) {
+-                    if(cbShowInfo.isSelected()) {
+-                        btnStart.setDisable(true);
+-                        btnStop.setDisable(true);
+-                    }
+-                    if(!cbShowInfo.isSelected()) {
+-                        N1.setDisable(false);
+-                        N2.setDisable(false);
+-                        L1.setDisable(false);
+-                        L2.setDisable(false);
+-                        P1.setDisable(false);
+-                        P2.setDisable(false);
+-                        WorkerPriority.setDisable(false);
+-                        WarriorPriority.setDisable(false);
+-                        cbShowInfo.setDisable(false);
+-                    }
++            antSimulation.startSimulation();
++        }
++    }
++
++    public void stop() {
++        if (habitat != null && antSimulation.startFlag) {
++            if(cbShowInfo.isSelected()) {
++                btnStart.setDisable(true);
++                btnStop.setDisable(true);
++            }
++            if(!cbShowInfo.isSelected()) {
++                N1.setDisable(false);
++                N2.setDisable(false);
++                L1.setDisable(false);
++                L2.setDisable(false);
++                P1.setDisable(false);
++                P2.setDisable(false);
++                WorkerPriority.setDisable(false);
++                WarriorPriority.setDisable(false);
++                cbShowInfo.setDisable(false);
++            }
+ 
+-                    WorkerAntAI Workerth = WorkerAntAI.getInstance();
+-                    WarriorAntAI Warriorth = WarriorAntAI.getInstance();
+-                    Workerth.isActive = false;
+-                    synchronized (Workerth){
+-                        Workerth.notify();
+-                    }
+-                    Warriorth.isActive = false;
+-                    synchronized (Warriorth){
+-                        Warriorth.notify();
+-                    }
+-                    antSimulation.stopSimulation();
+-                }
+-                break;
++            WorkerAntAI Workerth = WorkerAntAI.getInstance();
++            WarriorAntAI Warriorth = WarriorAntAI.getInstance();
++            Workerth.isActive = false;
++            synchronized (Workerth){
++                Workerth.notify();
++            }
++            Warriorth.isActive = false;
++            synchronized (Warriorth){
++                Warriorth.notify();
++            }
++            antSimulation.stopSimulation();
+         }
+     }
++
+     @FXML
+     private void clickTimeSwitch() {
+         if (ShowTime.isSelected() && !antSimulation.timerVisible) {
+@@ -226,37 +229,10 @@
+                 System.exit(0);
+                 break;
+             case "Старт (B)":
+-                if (habitat != null && !antSimulation.startFlag) {
+-                    btnStart.setDisable(true);
+-                    btnStop.setDisable(false);
+-
+-                    N1.setDisable(true);
+-                    N2.setDisable(true);
+-                    L1.setDisable(true);
+-                    L2.setDisable(true);
+-                    P1.setDisable(true);
+-                    P2.setDisable(true);
+-                    cbShowInfo.setDisable(true);
+-                    checkError();
+-                    antSimulation.startSimulation();
+-                }
++                start();
+                 break;
+             case "Стоп (E)":
+-                if (habitat != null && antSimulation.startFlag) {
+-                    if(cbShowInfo.isSelected()) {
+-                        btnStart.setDisable(true);
+-                        btnStop.setDisable(true);
+-                    }
+-
+-                    N1.setDisable(false);
+-                    N2.setDisable(false);
+-                    L1.setDisable(false);
+-                    L2.setDisable(false);
+-                    P1.setDisable(false);
+-                    P2.setDisable(false);
+-                    cbShowInfo.setDisable(false);
+-                    antSimulation.stopSimulation();
+-                }
++                stop();
+                 break;
+         }
+     }
+@@ -322,6 +298,27 @@
+             e.printStackTrace();
+         }
+     }
++
++    @FXML
++    private void openConsole() {
++        try {
++            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/example/labs/console.fxml"));
++            Pane root = fxmlLoader.load();
++            //root.setBackground(Background.fill(Color.BLACK));
++            ConsoleController consoleController = fxmlLoader.getController();
++            consoleController.setCommands(this, this.antSimulation); // Устанавливаем TreeMap
++
++            Stage stage = new Stage();
++            //stage.initModality(Modality.APPLICATION_MODAL);
++            stage.setTitle("Console");
++            stage.getIcons().add(new Image(getClass().getResource("/org/example/labs/icon/icon_console.png").toExternalForm()));
++            Scene consoleScene = new Scene(root, 1100, 600);
++            stage.setScene(consoleScene);
++            stage.showAndWait(); // Показываем окно и ждем, пока его закроют
++        } catch (IOException e) {
++            e.printStackTrace();
++        }
++    }
+ 
+     @FXML
+     private void controlWorkerAI(){

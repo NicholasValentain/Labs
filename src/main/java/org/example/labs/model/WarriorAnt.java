@@ -11,7 +11,7 @@ public class WarriorAnt extends Ant {
     private static final long serialVersionUID = 123456789L; // Пример значения serialVersionUID
     private static final double MOVEMENT_SPEED = 7.0;
 
-    private static String path = "C:/Users/User/Downloads/Lab5_FINALL/Lab5_S_V/Lab5_S_V/Lab5/Labs/Labs/src/main/resources/org/example/labs/AntGIF/ant2.gif";
+    private static String path = "D:/CODE/Java/Labs/src/main/resources/org/example/labs/AntGIF/ant2.gif";
     static final Image image;
 
     private double routeX;
