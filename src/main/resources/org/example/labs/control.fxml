@@ -46,6 +46,14 @@
                         <MenuItem text="Показать/Скрыть (T)" onAction="#clickTime" />
                     </items>
                 </Menu>
+                <Menu text="База Данных">
+                    <items>
+                        <MenuItem text="Сохранить всех" onAction="#saveAnt"/>
+                        <MenuItem text="Сохранить рабочих" onAction="#saveWorkerAnt"/>
+                        <MenuItem text="Сохранить воинов" onAction="#saveWarriorAnt"/>
+                        <MenuItem text="Загрузить" onAction="#loadAnt"/>
+                    </items>
+                </Menu>
 
             </menus>
         </MenuBar>
