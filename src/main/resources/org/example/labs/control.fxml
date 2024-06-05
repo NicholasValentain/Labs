@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.TextArea?>
 
 
 <?import javafx.scene.control.Label?>
@@ -25,6 +26,7 @@
                     <items>
                         <MenuItem text="Сохранить конфигурацию" onAction="#SaveConf"/>
                         <MenuItem text="Загрузить конфигурацию" onAction="#loadConf"/>
+                        <MenuItem text="Подключиться к серверу" onAction="#ConectServer"/>
                         <MenuItem text="Выход" onAction="#handleMenuAction"/>
                     </items>
                 </Menu>
@@ -42,14 +44,6 @@
                 <Menu text="Таймер">
                     <items>
                         <MenuItem text="Показать/Скрыть (T)" onAction="#clickTime" />
-                    </items>
-                </Menu>
-                <Menu text="База Данных">
-                    <items>
-                        <MenuItem text="Сохранить всех" onAction="#saveAnt"/>
-                        <MenuItem text="Сохранить рабочих" onAction="#saveWorkerAnt"/>
-                        <MenuItem text="Сохранить воинов" onAction="#saveWarriorAnt"/>
-                        <MenuItem text="Загрузить" onAction="#loadAnt"/>
                     </items>
                 </Menu>
 
@@ -139,6 +133,13 @@
                     </font>
                 </Label>
                 <ComboBox fx:id="WarriorPriority" style="-fx-font-size: 18px; -fx-scale-x: 1.2; -fx-scale-y: 1.2;" layoutX="1240" layoutY="690" prefWidth="95.0"/>
+                <Label fx:id="labelConnectionInfo" layoutX="-150" layoutY="360" textFill="crimson">
+                    <font>
+                      <Font name="System Bold" size="11.0" />
+                    </font>
+                </Label>
+                <TextArea fx:id="userListBox" layoutX="-195" layoutY="380" editable="false" prefWidth="190" prefHeight="130"/>
+                <ComboBox fx:id="syncSettingsWithBox" onAction="#clickSyncSettings" layoutX="-195" layoutY="525"/>
             </children>
         </Pane>
     </center>

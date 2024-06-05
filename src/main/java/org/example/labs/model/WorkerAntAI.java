@@ -12,14 +12,14 @@ public class WorkerAntAI extends BaseAI {
 
     public static WorkerAntAI getInstance(Habitat habitat) {
         if (instance == null) {
-            instance = new WorkerAntAI(habitat, "AI Physical");
+            instance = new WorkerAntAI(habitat, "Work");
         }
         return instance;
     }
 
     public static WorkerAntAI getInstance() {
         if (instance == null) {
-            instance = new WorkerAntAI(habitat, "AI Physical");
+            instance = new WorkerAntAI(habitat, "Work");
         }
         return instance;
     }

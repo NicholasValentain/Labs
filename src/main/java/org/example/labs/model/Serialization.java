@@ -67,16 +67,6 @@ public class Serialization {
             System.out.println(Habitat.getInstance().lastWorkerTime + "1");
             System.out.println(Habitat.getInstance().lastWarriorTime + "1\n");
 
-            // objectOutputStream.writeLong(AntSimulation.getInstance().simulationStartTime);
-            // objectOutputStream.writeLong(AntSimulation.getInstance().waitTime);
-            // objectOutputStream.writeLong(AntSimulation.getInstance().currentTime);
-            // objectOutputStream.writeLong(AntSimulation.getInstance().simulationTime);
-
-            // System.out.println(AntSimulation.getInstance().simulationStartTime);
-            // System.out.println(AntSimulation.getInstance().waitTime);
-            // System.out.println(AntSimulation.getInstance().simulationTime);
-            // System.out.println(AntSimulation.getInstance().currentTime);
-
             objectOutputStream.flush();
             objectOutputStream.close();
         } catch (FileNotFoundException eFileNotFound) {
@@ -147,35 +137,17 @@ public class Serialization {
             System.out.println(Habitat.getInstance().lastWorkerTime + "2");
             System.out.println(Habitat.getInstance().lastWarriorTime + "2\n");
 
-            // AntSimulation.getInstance().simulationStartTime =
-            // Habitat.getInstance().simulationStartTime;
-            // AntSimulation.getInstance().waitTime = Habitat.getInstance().waitTime;
-            // AntSimulation.getInstance().currentTime = Habitat.getInstance().currentTime;
-            // AntSimulation.getInstance().simulationTime =
-            // Habitat.getInstance().simulationTimes;
-
             antSimulation.simulationStartTime = Habitat.getInstance().simulationStartTime;
             antSimulation.waitTime = Habitat.getInstance().waitTime;
             antSimulation.currentTime = Habitat.getInstance().currentTime;
             antSimulation.simulationTime = Habitat.getInstance().simulationTimes;
 
-
             antSimulation.plusTime = Habitat.getInstance().simulationTimes;
-
-            // AntSimulation.getInstance().simulationStartTime =
-            // objectInputStream.readLong();
-            // AntSimulation.getInstance().waitTime = objectInputStream.readLong();
-            // AntSimulation.getInstance().currentTime = objectInputStream.readLong();
-            // AntSimulation.getInstance().simulationTime = objectInputStream.readLong();
-            // AntSimulation.getInstance().simulationStartTime =
-            // AntSimulation.getInstance().simulationTime
-            // + AntSimulation.getInstance().waitTime;
 
             System.out.println(antSimulation.simulationStartTime + "2");
             System.out.println(antSimulation.waitTime + "2");
             System.out.println(antSimulation.simulationTime + "2");
             System.out.println(antSimulation.currentTime + "2");
-            // Habitat.getInstance().restartSimulationTimer();
 
             objectInputStream.close();
         } catch (FileNotFoundException eFileNotFound) {
@@ -183,6 +155,62 @@ public class Serialization {
         } catch (IOException | ClassNotFoundException ex) {
             System.err.println("Error: IOException or ClassNotFoundException while deserializing");
             ex.printStackTrace();
+        }
+    }
+
+    public void serialServer(String filename, int antCount) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(filename, false);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+
+            Vector<Ant> antsList = Habitat.getInstance().getAntsList();
+            List<Ant> selectedAnts = new ArrayList<>();
+
+            // Проверка на количество муравьев для сериализации
+            antCount = Math.min(antCount, antsList.size());
+
+            // Перемешивание списка муравьев
+            Collections.shuffle(antsList);
+
+            // Выбор случайных муравьев для сериализации
+            for (int i = 0; i < antCount; i++) {
+                Ant ant = antsList.get(i);
+                selectedAnts.add(ant);
+                double x = ant.getImageView().getTranslateX();
+                double y = ant.getImageView().getTranslateY();
+                objectOutputStream.writeDouble(x);
+                objectOutputStream.writeDouble(y);
+            }
+
+            // Сериализация выбранных муравьев
+            objectOutputStream.writeObject(selectedAnts);
+
+        } catch (IOException e) {
+            System.err.println("Error: IOException while serializing");
+            e.printStackTrace();
+        }
+    }
+
+    public void deserialServer(String filename) {
+        try (FileInputStream fileInputStream = new FileInputStream(filename);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+
+            Vector<Ant> antsList = Habitat.getInstance().getAntsList();
+
+            // Десериализация списка выбранных муравьёв
+            List<Ant> selectedAnts = (List<Ant>) objectInputStream.readObject();
+
+            // Добавление десериализованных муравьёв в список
+            for (Ant ant : selectedAnts) {
+                double x = objectInputStream.readDouble();
+                double y = objectInputStream.readDouble();
+                ant.getImageView().setTranslateX(x);
+                ant.getImageView().setTranslateY(y);
+                antsList.add(ant);
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error: IOException or ClassNotFoundException while deserializing");
+            e.printStackTrace();
         }
     }
 }

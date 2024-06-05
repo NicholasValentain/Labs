@@ -15,14 +15,14 @@ public class WarriorAntAI extends BaseAI {
 
     public static WarriorAntAI getInstance(Habitat habitat) {
         if (instance == null) {
-            instance = new WarriorAntAI(habitat, "AI Physical");
+            instance = new WarriorAntAI(habitat, "Warri");
         }
         return instance;
     }
 
     public static WarriorAntAI getInstance() {
         if (instance == null) {
-            instance = new WarriorAntAI(habitat, "AI Physical");
+            instance = new WarriorAntAI(habitat, "Warri");
         }
         return instance;
     }

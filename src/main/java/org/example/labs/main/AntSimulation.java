@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -18,8 +19,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.Serializable;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 import org.example.labs.model.Habitat;
 import org.example.labs.model.Serialization;
+import org.example.labs.API.Client;
 import org.example.labs.controllres.Controller;
 import org.example.labs.model.WarriorAntAI;
 import org.example.labs.model.WorkerAntAI;
@@ -61,6 +67,7 @@ public class AntSimulation extends Application implements Serializable {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+
         root = new StackPane();
         Image Backgroundimg = new Image(getClass().getResourceAsStream("/org/example/labs/Background/soil2.png"));
         BackgroundSize bsize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true);
@@ -229,6 +236,7 @@ public class AntSimulation extends Application implements Serializable {
         }); // Остановка приложения по нажатию крестика
 
         primaryStage.show();
+
     }
 
     // Метод для запуска таймера обновления времени
@@ -264,7 +272,7 @@ public class AntSimulation extends Application implements Serializable {
             simulationStartTime = System.currentTimeMillis();
             if (plusTime > 0) {
                 simulationStartTime -= plusTime * 1000;
-                //plusTime = 0;
+                // plusTime = 0;
             }
         }
         habitat.resumeSimulation();
@@ -280,6 +288,7 @@ public class AntSimulation extends Application implements Serializable {
         simulationStartTime = System.currentTimeMillis();
         habitat.startSimulation();
         startTimer(); // Запускаем таймер
+
     }
 
     public void stopSimulation() {

@@ -17,7 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import org.example.labs.model.*;
-
+import org.example.labs.API.Client;
 import org.example.labs.main.AntSimulation;
 
 import java.io.*;
@@ -26,25 +26,15 @@ import java.util.TreeMap;
 
 import java.util.Vector;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.geometry.Orientation;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ChangeListener;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.input.MouseEvent;
-
 
 public class Controller {
     @FXML
-    public Button btnStart, btnStop, btnList, btnStopWorkerAI, btnStopWarriorAI, btnConsole, btnResume, btnSave, btnLoad;
+    public Button btnStart, btnStop, btnList, btnStopWorkerAI, btnStopWarriorAI, btnConsole, btnResume, btnSave,
+            btnLoad;
     @FXML
     public RadioButton ShowTime, HideTime;
     @FXML
@@ -61,14 +51,23 @@ public class Controller {
     private Habitat habitat; // Добавляем поле для хранения ссылки на habitat
     private AntSimulation antSimulation;
 
+    @FXML
+    public TextArea userListBox;
+    @FXML
+    public ComboBox<String> syncSettingsWithBox;
+    @FXML
+    public Label labelSettingsSource, labelConnectionInfo;
+
+    @FXML
+    public ComboBox<String> boxP1, boxP2;
+
     // Создание списка элементов для ComboBox
     ObservableList<String> options = FXCollections.observableArrayList(
             "10", "20", "30", "40", "50", "60", "70", "80", "90", "100");
     ObservableList<String> prioritys = FXCollections.observableArrayList(
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
 
-    ObservableList<String> users = FXCollections.observableArrayList(
-            "Nigger", "Dybkov", "Zayakin", "Pidor", "Saimon", "Belain", "Gabe", "Chmo", "Chert", "Pubertatnaya Yazva");
+    ObservableList<String> users = FXCollections.observableArrayList("Нет подключения к серверу");
 
     // Метод для установки ссылки на habitat
     public void setHabitat(Habitat habitat, AntSimulation antSimulation) {
@@ -92,14 +91,46 @@ public class Controller {
         listView.setItems(users);
     }
 
-//    // Устанавливаем обработчик события нажатия на элемент списка
-//    listView.setOnMouseClicked(event -> {
-//        String selectedItem = listView.getSelectionModel().getSelectedItem();
-//        System.out.println("Выбран элемент: " + selectedItem);
-//    });
+    @FXML
+    void ConectServer(ActionEvent event) {
+        Label mode = new Label();
+        Client.askUserName(mode);
+        if (!mode.getText().equals("exit")) {
+            Client.connectToServer();
+        }
+    }
 
-    public void takeUser() {
-        System.out.println(listView.getSelectionModel().getSelectedItem());
+    @FXML
+    private void takeUser() {
+        String selectedItem = listView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/org/example/labs/userAnt.fxml"));
+                Parent root = loader.load();
+
+                UserAntController controller = loader.getController();
+
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle("Количество муравьев c " + selectedItem);
+                stage.setScene(new Scene(root));
+                stage.showAndWait();
+
+                int antCount = controller.getAntCount();
+                System.out.println("Количество муравьев c " + selectedItem + ": " + antCount);
+
+                Client.setReqAnts(selectedItem, antCount);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Метод для получения данных от сервера и их десериализации
+    public void receiveAntDataFromServer(String filename) {
+        serialization.deserialServer(filename);
     }
 
     public void getConfig() {
@@ -212,10 +243,8 @@ public class Controller {
             cbShowInfo.setDisable(true);
             antSimulation.startSimulation();
 
-
             antSimulation.plusTime = 0;
             habitat.plusTime = 0;
-
 
             if (btnStopWorkerAI.getText().equals("Рабочих: ON")) {
                 WorkerAntAI Workerth = WorkerAntAI.getInstance();
@@ -538,216 +567,10 @@ public class Controller {
     }
 
     @FXML
-    void saveAnt() {
-        String url = "jdbc:postgresql://localhost:5432/test1";
-        String user = "postgres";
-        String password = "labsdb112";
-
-        Connection conn = null;
-        PreparedStatement deleteStmt = null;
-        PreparedStatement stmt = null;
-        try {
-            Vector<Ant> ants = Habitat.getInstance().getAntsList();
-
-            Class.forName("org.postgresql.Driver"); // Регистрируем драйвер JDBC
-            conn = DriverManager.getConnection(url, user, password); // Устанавливаем соединение с базой данных
-
-            String deleteSql = "DELETE FROM ants"; // SQL запрос для удаления предыдущих данных
-            deleteStmt = conn.prepareStatement(deleteSql); // Создаем PreparedStatement для удаления
-            deleteStmt.executeUpdate(); // Выполняем запрос для удаления предыдущих данных
-
-            // Сбрасываем значения автоинкрементируемого столбца
-            String resetSeqSql = "ALTER SEQUENCE ants_id_seq RESTART WITH 1";
-            PreparedStatement resetSeqStmt = conn.prepareStatement(resetSeqSql);
-            resetSeqStmt.executeUpdate();
-
-            String sql = "INSERT INTO ants (typeAnt, posX, posY, lifeTime) VALUES (?, ?, ?, ?)"; // SQL запрос для вставки данных
-            stmt = conn.prepareStatement(sql); // Создаем PreparedStatement
-            for (Ant ant : ants) {
-                if (ant instanceof WorkerAnt) {
-                    stmt.setInt(1, 0); // Для рабочих
-                } else if (ant instanceof WarriorAnt) {
-                    stmt.setInt(1, 1); // Для солдат
-                }
-                stmt.setDouble(2, ant.posX); // значения для поля posX
-                stmt.setDouble(3, ant.posY); // значения для поля posY
-                stmt.setLong(4, ant.getLifeTime()); // значения для поля lifeTime
-
-                // Выполняем запрос
-                int rowsInserted = stmt.executeUpdate();
-                if (rowsInserted > 0) {
-                    System.out.println("Элемент успешно добавлен в таблицу!");
-                }
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                // Закрываем PreparedStatement и Connection
-                if (stmt != null) { stmt.close(); }
-                if (deleteStmt != null) { deleteStmt.close(); }
-                if (conn != null) { conn.close(); }
-            } catch (SQLException e) { e.printStackTrace(); }
-        }
-    }
-
-    @FXML
-    void saveWorkerAnt() {
-        String url = "jdbc:postgresql://localhost:5432/test1";
-        String user = "postgres";
-        String password = "labsdb112";
-
-        Connection conn = null;
-        PreparedStatement deleteStmt = null;
-        PreparedStatement stmt = null;
-        try {
-            Vector<Ant> ants = Habitat.getInstance().getAntsList();
-
-            Class.forName("org.postgresql.Driver"); // Регистрируем драйвер JDBC
-            conn = DriverManager.getConnection(url, user, password); // Устанавливаем соединение с базой данных
-
-            String deleteSql = "DELETE FROM ants"; // SQL запрос для удаления предыдущих данных
-            deleteStmt = conn.prepareStatement(deleteSql); // Создаем PreparedStatement для удаления
-            deleteStmt.executeUpdate(); // Выполняем запрос для удаления предыдущих данных
-
-            // Сбрасываем значения автоинкрементируемого столбца
-            String resetSeqSql = "ALTER SEQUENCE ants_id_seq RESTART WITH 1";
-            PreparedStatement resetSeqStmt = conn.prepareStatement(resetSeqSql);
-            resetSeqStmt.executeUpdate();
-
-            String sql = "INSERT INTO ants (typeAnt, posX, posY, lifeTime) VALUES (?, ?, ?, ?)"; // SQL запрос для вставки данных
-            stmt = conn.prepareStatement(sql); // Создаем PreparedStatement
-            for (Ant ant : ants) {
-                if (ant instanceof WorkerAnt) {
-                    stmt.setInt(1, 0); // Для рабочих
-                    stmt.setDouble(2, ant.posX); // значения для поля posX
-                    stmt.setDouble(3, ant.posY); // значения для поля posY
-                    stmt.setLong(4, ant.getLifeTime()); // значения для поля lifeTime
-
-                    // Выполняем запрос
-                    int rowsInserted = stmt.executeUpdate();
-                    if (rowsInserted > 0) {
-                        System.out.println("Элемент успешно добавлен в таблицу!");
-                    }
-                }
-
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                // Закрываем PreparedStatement и Connection
-                if (stmt != null) { stmt.close(); }
-                if (deleteStmt != null) { deleteStmt.close(); }
-                if (conn != null) { conn.close(); }
-            } catch (SQLException e) { e.printStackTrace(); }
-        }
-    }
-
-    @FXML
-    void saveWarriorAnt() {
-        String url = "jdbc:postgresql://localhost:5432/test1";
-        String user = "postgres";
-        String password = "labsdb112";
-
-        Connection conn = null;
-        PreparedStatement deleteStmt = null;
-        PreparedStatement stmt = null;
-        try {
-            Vector<Ant> ants = Habitat.getInstance().getAntsList();
-
-            Class.forName("org.postgresql.Driver"); // Регистрируем драйвер JDBC
-            conn = DriverManager.getConnection(url, user, password); // Устанавливаем соединение с базой данных
-
-            String deleteSql = "DELETE FROM ants"; // SQL запрос для удаления предыдущих данных
-            deleteStmt = conn.prepareStatement(deleteSql); // Создаем PreparedStatement для удаления
-            deleteStmt.executeUpdate(); // Выполняем запрос для удаления предыдущих данных
-
-            // Сбрасываем значения автоинкрементируемого столбца
-            String resetSeqSql = "ALTER SEQUENCE ants_id_seq RESTART WITH 1";
-            PreparedStatement resetSeqStmt = conn.prepareStatement(resetSeqSql);
-            resetSeqStmt.executeUpdate();
-
-
-            String sql = "INSERT INTO ants (typeAnt, posX, posY, lifeTime) VALUES (?, ?, ?, ?)"; // SQL запрос для вставки данных
-            stmt = conn.prepareStatement(sql); // Создаем PreparedStatement
-            for (Ant ant : ants) {
-                if (ant instanceof WarriorAnt) {
-                    stmt.setInt(1, 1); // Для рабочих
-                    stmt.setDouble(2, ant.posX); // значения для поля posX
-                    stmt.setDouble(3, ant.posY); // значения для поля posY
-                    stmt.setLong(4, ant.getLifeTime()); // значения для поля lifeTime
-
-                    // Выполняем запрос
-                    int rowsInserted = stmt.executeUpdate();
-                    if (rowsInserted > 0) {
-                        System.out.println("Элемент успешно добавлен в таблицу!");
-                    }
-                }
-
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                // Закрываем PreparedStatement и Connection
-                if (stmt != null) { stmt.close(); }
-                if (deleteStmt != null) { deleteStmt.close(); }
-                if (conn != null) { conn.close(); }
-            } catch (SQLException e) { e.printStackTrace(); }
-        }
-    }
-
-    @FXML
-    public void loadAnt() {
-        stop();
-        habitat.clearObjects();
-        String url = "jdbc:postgresql://localhost:5432/test1";
-        String user = "postgres";
-        String password = "labsdb112";
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            Random rand = new Random();
-
-            Class.forName("org.postgresql.Driver"); // Регистрируем драйвер JDBC
-            conn = DriverManager.getConnection(url, user, password); // Устанавливаем соединение с базой данных
-            String sql = "SELECT * FROM ants"; // SQL запрос для чтения данных
-            stmt = conn.prepareStatement(sql); // Создаем PreparedStatement
-            rs = stmt.executeQuery(); // Выполняем запрос
-
-            // Обрабатываем результат запроса
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                int type = rs.getInt("typeAnt");
-                double posX = rs.getDouble("posX");
-                double posY = rs.getDouble("posY");
-                long lifeTime = rs.getLong("lifeTime");
-                if (type == 0) {
-                    habitat.addAnt(new WorkerAnt(rand.nextInt(0, 1150), rand.nextInt(0, 850), habitat.simulationTimes, lifeTime), habitat.simulationTimes, posX, posY);
-                } else if (type == 1) {
-                    habitat.addAnt(new WarriorAnt(rand.nextInt(0, 1150), rand.nextInt(0, 850), habitat.simulationTimes, lifeTime), habitat.simulationTimes, posX, posY);
-                }
-
-                // Делаем что-то с данными (например, выводим их на экран)
-                System.out.println("ID: " + id + ", Type: " + type + ", PosX: " + posX + ", PosY: " + posY + ", LifeTime: " + lifeTime);
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                // Закрываем ResultSet, PreparedStatement и Connection
-                if (rs != null) { rs.close(); }
-                if (stmt != null) { stmt.close(); }
-                if (conn != null) { conn.close(); }
-            } catch (SQLException e) { e.printStackTrace(); }
-        }
-        antSimulation.root.getChildren().remove(antSimulation.descriptionText);
-        btnResume.setDisable(false);
+    public void clickSyncSettings() throws IOException {
+        if (labelConnectionInfo.getText().equals("[Нет соединения]"))
+            return;
+        String userName = syncSettingsWithBox.getValue();
     }
 
 }
